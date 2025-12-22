@@ -1,0 +1,29 @@
+[
+  {
+    "id": 1,
+    "title": "Spider-Man 2",
+    "slug": "spiderman-2",
+    "year": 2004,
+    "poster": "/poster/spiderman-2.jpg",
+    "description": "Peter Parker struggles to balance his life as Spider-Man and Peter Parker.",
+    "videoUrl": "https://www.youtube.com/embed/dQw4w9WgXcQ"
+  },
+  {
+    "id": 2,
+    "title": "Avatar",
+    "slug": "avatar",
+    "year": 2009,
+    "poster": "/poster/avatar.jpg",
+    "description": "A marine on an alien planet becomes torn between following orders and protecting his new home.",
+    "videoUrl": "https://www.youtube.com/embed/dQw4w9WgXcQ"
+  },
+  {
+    "id": 3,
+    "title": "One Piece",
+    "slug": "one-piece",
+    "year": 2023,
+    "poster": "/poster/one-piece.jpg",
+    "description": "Monkey D. Luffy sets out on a journey to become the Pirate King.",
+    "videoUrl": "https://www.youtube.com/embed/dQw4w9WgXcQ"
+  }
+]

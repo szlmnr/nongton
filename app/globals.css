@@ -1,0 +1,34 @@
+@import "tailwindcss";
+
+@theme {
+  --color-neon-lime: #D4E910;
+  --radius-xl-card: 32px;
+  --font-size-tiny: 10px;
+  --spacing-card-desc: 140px;
+  
+  /* Konfigurasi Font */
+  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui;
+  --font-mono: var(--font-geist-mono), ui-monospace, SFMono-Regular;
+}
+
+/* Base styling untuk HTML & Body */
+body {
+  background-color: black;
+  color: white;
+  font-family: var(--font-sans);
+}
+
+/* Custom Scrollbar (Opsional agar makin mirip TMDB) */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #000;
+}
+::-webkit-scrollbar-thumb {
+  background: #333;
+  border-radius: 10px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #444;
+}
