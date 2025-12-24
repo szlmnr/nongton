@@ -1,20 +1,38 @@
-import Link from "next/link"; // 1. Tambahkan import ini
+import Link from "next/link";
 import SearchBar from "./searchbar";
 
 export default function Navbar() {
   return (
-    <header className="sticky top-0 z-50 bg-black/80 backdrop-blur border-b border-white/10">
-      <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between gap-4">
+    <nav className="fixed top-0 w-full z-[100] backdrop-blur-xl bg-black/40 border-b border-white/5 px-6 md:px-12 py-4">
+      <div className="max-w-7xl mx-auto flex items-center gap-6">
         
-        {/* 2. Bungkus h1 dengan Link ke "/" */}
-        <Link href="/">
-          <h1 className="text-xl font-bold text-red-500 hover:text-red-400 transition-colors cursor-pointer">
-            Nongton
-          </h1>
-        </Link>
+        {/* SISI KIRI: Logo & Navigasi */}
+        <div className="flex gap-10 items-center">
+          <Link href="/">
+            <h1 className="text-2xl font-black tracking-tighter text-red-600 hover:scale-105 transition-transform cursor-pointer">
+              SALSTREAM
+            </h1>
+          </Link>
+          
+          <div className="hidden md:flex gap-8 text-xs font-bold uppercase tracking-[0.2em]">
+            <Link href="/" className="text-white hover:text-red-500 transition-colors">
+              Nongton
+            </Link>
+            <Link href="/dengerin" className="text-white hover:text-red-500 transition-colors">
+              Dengerin
+            </Link>
+          </div>
+        </div>
 
-        <SearchBar />
+        {/* SPACER: Ini yang dorong Search Bar ke kanan */}
+        <div className="flex-1" />
+
+        {/* SISI KANAN: Search Bar */}
+        <div className="w-full max-w-md">
+          <SearchBar />
+        </div>
+
       </div>
-    </header>
+    </nav>
   );
 }
