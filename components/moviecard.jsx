@@ -8,7 +8,6 @@ export default function MovieCard({ title, year, slug, poster }) {
 
   return (
     <Link href={`/movie/${slug}`} className="group relative block">
-      {/* UKURAN DIKUNCI DI SINI (w-[180px] mobile, w-[240px] desktop) */}
       <div className="relative w-[180px] md:w-[240px] aspect-[2/3] overflow-hidden rounded-xl-card bg-zinc-900 shadow-xl transition-all duration-300 hover:scale-105">
         
         <div className="absolute inset-0 z-0">
@@ -38,13 +37,14 @@ export default function MovieCard({ title, year, slug, poster }) {
           <div className="w-full">
             <div className="backdrop-blur-xl bg-black/40 border border-white/10 p-3 rounded-2xl shadow-2xl transition-all duration-300 group-hover:bg-black/60">
               <div className="flex justify-between items-center">
+                {/* DI SINI PERBAIKANNYA: Mengganti tag <p> menjadi <div>/<span> */}
                 <div>
-                  <p className="text-[8px] font-black text-white/40 uppercase leading-none mb-1 tracking-wider">
+                  <span className="block text-[8px] font-black text-white/40 uppercase leading-none mb-1 tracking-wider">
                     Release Year
-                  </p>
-                  <p className="text-sm font-black text-white leading-none">
+                  </span>
+                  <span className="block text-sm font-black text-white leading-none">
                     {year || "2025"}
-                  </p>
+                  </span>
                 </div>
                 
                 <div className="w-7 h-7 rounded-full border border-white/10 flex items-center justify-center bg-white/5">
@@ -54,9 +54,9 @@ export default function MovieCard({ title, year, slug, poster }) {
             </div>
 
             <div className="mt-3 text-center opacity-0 group-hover:opacity-100 transition-opacity">
-               <p className="text-[7px] font-bold text-white drop-shadow-md tracking-[0.4em] uppercase">
-                 Show Details
-               </p>
+               <span className="block text-[7px] font-bold text-white drop-shadow-md tracking-[0.4em] uppercase">
+                  Show Details
+               </span>
             </div>
           </div>
         </div>

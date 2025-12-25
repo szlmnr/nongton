@@ -1,23 +1,38 @@
 import VideoPlayer from "@/components/videoplayer";
 import AdsBanner from "@/components/adsbanner";
 import MovieCard from "@/components/moviecard";
-import { getMovieDetails, getPopularMovies } from "@/lib/tmdb";
+import { getMovieDetails, getPopularMovies, getSeasonDetails } from "@/lib/tmdb";
 import translate from 'google-translate-api-next';
 import Image from "next/image";
 import { notFound } from "next/navigation";
 
-export default async function MovieDetailPage({ params }) {
+export default async function MovieDetailPage({ params, searchParams }) {
   const { slug } = await params;
-  if (!slug) return notFound();
+  const { s, e } = await searchParams;
 
+  if (!slug) return notFound();
   const movieId = slug.split("-")[0];
-  
+
   const [movie, recommendations] = await Promise.all([
     getMovieDetails(movieId),
     getPopularMovies(),
   ]);
 
   if (!movie) notFound();
+
+  // 1. LOGIKA DETEKSI SERIES VS MOVIE
+  const isTV = movie.first_air_date !== undefined;
+  const currentSeason = s || "1";
+  const currentEpisode = e || "1";
+
+  // 2. LOGIKA AMBIL DATA SEASON (Sekarang variabel isTV & movie sudah aman diakses)
+  const seasonData = isTV ? await getSeasonDetails(movie.id, currentSeason) : null;
+  const episodes = seasonData?.episodes || [];
+
+  // 3. LOGIKA EMBED (IDLIX STYLE)
+  const fullMovieSrc = isTV
+    ? `https://vidsrc.to/embed/tv/${movie.id}/${currentSeason}/${currentEpisode}`
+    : `https://vidsrc.to/embed/movie/${movie.id}`;
 
   // Logika Terjemahan Sinopsis
   let sinopsisFinal = movie.overview;
@@ -30,15 +45,10 @@ export default async function MovieDetailPage({ params }) {
     }
   }
 
-  // --- LOGIKA TRAILER YOUTUBE ---
   const trailer = movie.videos?.results?.find(
     (v) => v.type === "Trailer" && v.site === "YouTube"
   );
   const videoSrc = trailer ? `https://www.youtube.com/embed/${trailer.key}` : null;
-
-  // --- LOGIKA FULL MOVIE EMBED (IDLIX/VIDSRC) ---
-  const fullMovieSrc = `https://vidsrc.to/embed/movie/${movie.id}`;
-
   const cast = movie.credits?.cast?.slice(0, 6) || [];
 
   return (
@@ -47,30 +57,34 @@ export default async function MovieDetailPage({ params }) {
       <div className="relative w-full h-[50vh] md:h-[65vh]">
         <Image
           src={`https://image.tmdb.org/t/p/original${movie.backdrop_path}`}
-          alt={movie.title}
+          alt={movie.title || movie.name}
           fill
           className="object-cover opacity-30"
           priority
         />
         <div className="absolute inset-0 bg-linear-to-t from-black via-black/20 to-transparent" />
-        
+
         <div className="absolute bottom-0 left-0 p-8 w-full">
           <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-end gap-8">
             <div className="hidden md:block relative w-44 h-64 flex-none shadow-2xl border border-white/10 rounded-2xl overflow-hidden">
-                <Image 
-                  src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`} 
-                  fill 
-                  alt={movie.title} 
-                  className="object-cover" 
-                />
+              <Image
+                src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
+                fill
+                alt={movie.title || movie.name}
+                className="object-cover"
+              />
             </div>
             <div className="space-y-4 pb-4">
-              <p className="text-neon-yellow text-[10px] font-black uppercase tracking-[0.4em]">SalStream Exclusive</p>
-              <h1 className="text-4xl md:text-6xl font-black uppercase tracking-tighter leading-none">{movie.title}</h1>
+              <p className="text-neon-yellow text-[10px] font-black uppercase tracking-[0.4em]">
+                {isTV ? "TV Series" : "SalStream Exclusive"}
+              </p>
+              <h1 className="text-4xl md:text-6xl font-black uppercase tracking-tighter leading-none">
+                {movie.title || movie.name}
+              </h1>
               <div className="flex flex-wrap items-center gap-4 text-sm font-bold text-zinc-400">
                 <span className="text-neon-yellow">⭐ {movie.vote_average?.toFixed(1)}</span>
-                <span>{movie.release_date?.split("-")[0]}</span>
-                <span>{movie.runtime} Min</span>
+                <span>{(movie.release_date || movie.first_air_date)?.split("-")[0]}</span>
+                {movie.runtime && <span>{movie.runtime} Min</span>}
                 <div className="flex gap-2">
                   {movie.genres?.slice(0, 2).map(g => (
                     <span key={g.id} className="px-2 py-0.5 bg-white/5 border border-white/10 rounded text-[10px] uppercase">{g.name}</span>
@@ -83,9 +97,9 @@ export default async function MovieDetailPage({ params }) {
       </div>
 
       <div className="max-w-6xl mx-auto p-8 space-y-16">
-        
+
         {/* 2. TRAILER SECTION */}
-        {videoSrc && (
+        {videoSrc && !s && ( // Sembunyikan trailer kalau lagi nonton episode tertentu biar gak penuh
           <section className="space-y-4">
             <div className="flex items-center justify-between border-b border-white/10 pb-4">
               <h2 className="text-xl font-black uppercase tracking-widest text-zinc-400">Official Trailer</h2>
@@ -95,13 +109,18 @@ export default async function MovieDetailPage({ params }) {
           </section>
         )}
 
-        {/* 3. FULL MOVIE PLAYER SECTION (IDLIX STYLE) */}
+        {/* 3. FULL MOVIE / TV PLAYER SECTION */}
         <section className="space-y-6">
-          <div className="flex items-center gap-3 border-b border-neon-yellow/30 pb-4">
-            <div className="w-2.5 h-2.5 rounded-full bg-neon-yellow animate-pulse" />
-            <h2 className="text-2xl font-black uppercase tracking-tighter">SalStream Cinema <span className="text-zinc-500 font-medium">— Full Movie</span></h2>
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-neon-yellow/30 pb-4">
+            <div className="flex items-center gap-3">
+              <div className="w-2.5 h-2.5 rounded-full bg-neon-yellow animate-pulse" />
+              <h2 className="text-2xl font-black uppercase tracking-tighter">
+                SalStream Cinema <span className="text-zinc-500 font-medium">— {isTV ? `Season ${currentSeason} Ep ${currentEpisode}` : 'Full Movie'}</span>
+              </h2>
+            </div>
+            {isTV && <p className="text-[10px] text-zinc-400 font-bold uppercase">Pilih episode di bawah player</p>}
           </div>
-          
+
           <div className="relative w-full aspect-video bg-zinc-900 rounded-2xl overflow-hidden shadow-[0_0_60px_rgba(0,0,0,0.8)] border border-white/5">
             <iframe
               src={fullMovieSrc}
@@ -109,17 +128,86 @@ export default async function MovieDetailPage({ params }) {
               allowFullScreen
               frameBorder="0"
               scrolling="no"
-              title={`${movie.title} Full Movie`}
+              title={movie.title || movie.name}
             ></iframe>
           </div>
+
+          {/* EPISODE SELECTOR (IDLIX STYLE) */}
+          {isTV && episodes.length > 0 && (
+            <section className="mt-12 space-y-6">
+              {/* Header & Season Switcher */}
+              <div className="flex items-center justify-between border-b border-white/10 pb-4">
+                <h3 className="text-xl font-black uppercase tracking-tighter text-white">
+                  Episodes <span className="text-red-600 ml-2 text-sm">Season {currentSeason}</span>
+                </h3>
+                <div className="flex gap-2">
+                  {movie.seasons?.filter(s => s.season_number > 0).map(s => (
+                    <a key={s.id} href={`?s=${s.season_number}&e=1`}
+                      className={`px-3 py-1 rounded-md text-[10px] font-bold border transition-all ${currentSeason == s.season_number ? 'bg-red-600 text-white border-red-600' : 'border-white/10 text-zinc-500 hover:border-white/30'}`}>
+                      S{s.season_number}
+                    </a>
+                  ))}
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                {episodes.map((ep) => (
+                  <a
+                    key={ep.id}
+                    href={`?s=${currentSeason}&e=${ep.episode_number}`}
+                    className="group relative block aspect-video w-full rounded-xl overflow-hidden bg-zinc-900 border border-white/5"
+                  >
+                    <Image
+                      src={ep.still_path ? `https://image.tmdb.org/t/p/w500${ep.still_path}` : `https://image.tmdb.org/t/p/w500${movie.backdrop_path}`}
+                      fill
+                      alt={ep.name}
+                      className="object-cover transition-transform duration-500 group-hover:scale-110 opacity-80 group-hover:opacity-100"
+                    />
+
+                    <div className="absolute inset-0 bg-gradient-to-t from-black via-black/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10">
+                      <div className="absolute bottom-0 left-0 right-0 p-4 pb-6 flex flex-col items-start gap-1">
+                        <div className="flex items-center gap-2 mb-0.5">
+                          <div className="bg-red-600 px-2 py-0.5 rounded-full flex items-center justify-center">
+                            <span className="text-[9px] font-black leading-none text-black uppercase whitespace-nowrap pt-[0.5px]">
+                              SEASON {currentSeason}
+                            </span>
+                          </div>
+                          <span className="text-red-500 text-[10px] font-black uppercase tracking-widest leading-none">
+                            EPISODE {ep.episode_number}
+                          </span>
+                        </div>
+                        <span className="text-white text-sm font-bold truncate w-full text-left">
+                          {ep.name || `Episode ${ep.episode_number}`}
+                        </span>
+                        <span className="text-zinc-400 text-[9px] font-medium uppercase mt-0.5 text-left">
+                          {ep.air_date || 'N/A'} • {movie.name}
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* SELEKSI AKTIF (NOW WATCHING) */}
+                    {currentEpisode == ep.episode_number && (
+                      <div className="absolute inset-0 border-2 border-red-600 bg-red-600/10 z-20 flex items-start p-3">
+                        <div className="absolute top-2 right-2 inline-flex items-center px-2 py-[2px] text-[8px] font-bold uppercase text-white bg-red-600 rounded">
+                          Now Watching
+                        </div>
+
+                      </div>
+                    )}
+                  </a>
+                ))}
+              </div>
+            </section>
+          )}
+
           <div className="flex justify-between items-center px-2">
-             <p className="text-[10px] text-zinc-500 uppercase tracking-[0.2em]">Server: SalStream-Main-V1</p>
-             <p className="text-[10px] text-neon-yellow font-bold uppercase tracking-[0.2em] animate-bounce">Auto Subtitle Indo Active</p>
+            <p className="text-[10px] text-zinc-500 uppercase tracking-[0.2em]">Server: SalStream-Main-V1</p>
+            <p className="text-[10px] text-neon-yellow font-bold uppercase tracking-[0.2em] animate-bounce">Auto Subtitle Indo Active</p>
           </div>
         </section>
 
+        {/* 4. STORYLINE & INFO */}
         <div className="grid md:grid-cols-3 gap-12">
-          {/* KOLOM KIRI: Sinopsis & Cast */}
           <div className="md:col-span-2 space-y-10">
             <section>
               <h3 className="text-neon-yellow uppercase tracking-[0.3em] text-[10px] font-black mb-4">Storyline</h3>
@@ -132,17 +220,15 @@ export default async function MovieDetailPage({ params }) {
               <h3 className="text-zinc-500 uppercase tracking-widest text-[10px] font-black mb-5">Top Cast</h3>
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
                 {cast.map((person) => (
-                  <div key={person.id} className="flex items-center gap-3 bg-zinc-900/40 p-3 rounded-xl border border-white/5 hover:bg-zinc-900 transition-colors">
+                  <div key={person.id} className="flex items-center gap-3 bg-zinc-900/40 p-3 rounded-xl border border-white/5">
                     <div className="relative w-10 h-10 rounded-full overflow-hidden flex-none">
-                      <Image 
+                      <Image
                         src={person.profile_path ? `https://image.tmdb.org/t/p/w185${person.profile_path}` : "/no-avatar.png"}
-                        fill
-                        alt={person.name}
-                        className="object-cover grayscale hover:grayscale-0 transition-all duration-500"
+                        fill alt={person.name} className="object-cover grayscale"
                       />
                     </div>
                     <div className="min-w-0">
-                      <p className="text-xs font-black truncate uppercase">{person.name}</p>
+                      <p className="text-xs font-black truncate uppercase text-zinc-200">{person.name}</p>
                       <p className="text-[10px] text-zinc-500 truncate">{person.character}</p>
                     </div>
                   </div>
@@ -151,42 +237,43 @@ export default async function MovieDetailPage({ params }) {
             </section>
           </div>
 
-          {/* KOLOM KANAN: Detail Info */}
           <aside className="space-y-6 bg-zinc-900/20 p-8 rounded-3xl border border-white/5 h-fit backdrop-blur-sm">
             <div className="grid grid-cols-1 gap-6">
+              <div>
+                <p className="text-zinc-500 text-[9px] font-black uppercase tracking-widest mb-1">Status</p>
+                <p className="font-bold text-sm uppercase">{movie.status}</p>
+              </div>
+              <div>
+                <p className="text-zinc-500 text-[9px] font-black uppercase tracking-widest mb-1">Type</p>
+                <p className="font-bold text-sm uppercase text-neon-yellow">{isTV ? "TV SERIES" : "MOVIE"}</p>
+              </div>
+              <div>
+                <p className="text-zinc-500 text-[9px] font-black uppercase tracking-widest mb-1">Original Language</p>
+                <p className="font-bold text-sm uppercase">{movie.original_language}</p>
+              </div>
+              {movie.networks && (
                 <div>
-                  <p className="text-zinc-500 text-[9px] font-black uppercase tracking-widest mb-1">Status</p>
-                  <p className="font-bold text-sm uppercase">{movie.status}</p>
+                  <p className="text-zinc-500 text-[9px] font-black uppercase tracking-widest mb-1">Network</p>
+                  <p className="font-bold text-sm uppercase">{movie.networks[0]?.name}</p>
                 </div>
-                <div>
-                  <p className="text-zinc-500 text-[9px] font-black uppercase tracking-widest mb-1">Production</p>
-                  <p className="font-bold text-sm">{movie.production_companies?.[0]?.name || "-"}</p>
-                </div>
-                <div>
-                  <p className="text-zinc-500 text-[9px] font-black uppercase tracking-widest mb-1">Original Language</p>
-                  <p className="font-bold text-sm uppercase">{movie.original_language}</p>
-                </div>
-                <div>
-                  <p className="text-zinc-500 text-[9px] font-black uppercase tracking-widest mb-1">Budget</p>
-                  <p className="font-bold text-sm text-neon-yellow">${movie.budget?.toLocaleString() || "-"}</p>
-                </div>
+              )}
             </div>
           </aside>
         </div>
 
-        {/* 4. REKOMENDASI SECTION */}
+        {/* 5. REKOMENDASI SECTION */}
         <section className="pt-12 border-t border-white/5">
           <div className="flex items-center gap-4 mb-8">
-             <h2 className="text-2xl font-black uppercase tracking-tighter">Recommended for you</h2>
-             <div className="flex-1 h-px bg-white/5" />
+            <h2 className="text-2xl font-black uppercase tracking-tighter text-white">Recommended for you</h2>
+            <div className="flex-1 h-px bg-white/5" />
           </div>
           <div className="grid grid-cols-2 md:grid-cols-5 gap-6">
             {recommendations.slice(0, 5).map((item) => (
               <MovieCard
                 key={item.id}
-                title={item.title}
-                year={item.release_date?.split("-")[0]}
-                slug={`${item.id}-${item.title.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`}
+                title={item.title || item.name}
+                year={(item.release_date || item.first_air_date)?.split("-")[0]}
+                slug={`${item.id}-${(item.title || item.name).toLowerCase().replace(/[^a-z0-9]+/g, "-")}`}
                 poster={item.poster_path}
               />
             ))}
