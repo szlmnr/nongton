@@ -66,7 +66,7 @@ export default async function HomePage() {
 
   return (
     <div className="flex flex-col overflow-x-hidden bg-black min-h-screen">
-      <section className="relative min-h-screen flex items-end pb-40 md:pb-56 lg:pb-64 overflow-hidden">
+      <section className="relative min-h-screen flex items-end pb-56 md:pb-72 lg:pb-96 overflow-hidden">
         {featuredMovie && (
           <>
             <div className="absolute inset-0 z-0">
@@ -127,7 +127,7 @@ export default async function HomePage() {
       </section>
 
       {/* ================= MOVIE SECTIONS ================= */}
-      <div className="mt-10">
+      <div className="mt-32 md:mt-40 lg:mt-48">
         <h2 className="px-6 md:px-12 text-3xl font-black text-white italic mb-2 uppercase">Movies</h2>
 
         {/* Tambahkan .filter(m => m.title) agar Series tidak masuk sini */}

@@ -3,7 +3,7 @@ import SearchBar from "./searchbar";
 
 export default function Navbar() {
   return (
-    <nav className="fixed top-0 w-full z-[100] backdrop-blur-xl bg-black/40 border-b border-white/5 px-6 md:px-12 py-4">
+    <nav className="fixed top-0 w-full z-[9999] backdrop-blur-xl bg-black/40 border-b border-white/5 px-6 md:px-12 py-4">
       <div className="max-w-7xl mx-auto flex items-center gap-6">
         
         {/* SISI KIRI: Logo & Navigasi */}

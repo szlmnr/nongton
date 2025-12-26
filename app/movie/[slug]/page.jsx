@@ -164,7 +164,7 @@ export default async function MovieDetailPage({ params, searchParams }) {
                       className="object-cover transition-transform duration-500 group-hover:scale-110 opacity-80 group-hover:opacity-100"
                     />
 
-                    <div className="absolute inset-0 bg-gradient-to-t from-black via-black/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10">
+                    <div className="absolute inset-0 bg-linear-to-t from-black via-black/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10">
                       <div className="absolute bottom-0 left-0 right-0 p-4 pb-6 flex flex-col items-start gap-1">
                         <div className="flex items-center gap-2 mb-0.5">
                           <div className="bg-red-600 px-2 py-0.5 rounded-full flex items-center justify-center">
@@ -188,7 +188,7 @@ export default async function MovieDetailPage({ params, searchParams }) {
                     {/* SELEKSI AKTIF (NOW WATCHING) */}
                     {currentEpisode == ep.episode_number && (
                       <div className="absolute inset-0 border-2 border-red-600 bg-red-600/10 z-20 flex items-start p-3">
-                        <div className="absolute top-2 right-2 inline-flex items-center px-2 py-[2px] text-[8px] font-bold uppercase text-white bg-red-600 rounded">
+                        <div className="absolute top-2 right-2 inline-flex items-center px-2 py-0.5 text-[8px] font-bold uppercase text-white bg-red-600 rounded">
                           Now Watching
                         </div>
 
