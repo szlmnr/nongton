@@ -150,7 +150,7 @@ export default async function MovieDetailPage({ params, searchParams }) {
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-3 gap-4 md:gap-6">
                 {episodes.map((ep) => (
                   <a
                     key={ep.id}
@@ -187,7 +187,7 @@ export default async function MovieDetailPage({ params, searchParams }) {
 
                     {/* SELEKSI AKTIF (NOW WATCHING) */}
                     {currentEpisode == ep.episode_number && (
-                      <div className="absolute inset-0 border-2 border-red-600 bg-red-600/10 z-20 flex items-start p-3">
+                      <div className="absolute inset-0 bg-red-600/10 z-20 flex items-start p-3">
                         <div className="absolute top-2 right-2 inline-flex items-center px-2 py-0.5 text-[8px] font-bold uppercase text-white bg-red-600 rounded">
                           Now Watching
                         </div>
@@ -262,23 +262,29 @@ export default async function MovieDetailPage({ params, searchParams }) {
         </div>
 
         {/* 5. REKOMENDASI SECTION */}
-        <section className="pt-12 border-t border-white/5">
-          <div className="flex items-center gap-4 mb-8">
-            <h2 className="text-2xl font-black uppercase tracking-tighter text-white">Recommended for you</h2>
-            <div className="flex-1 h-px bg-white/5" />
-          </div>
-          <div className="grid grid-cols-2 md:grid-cols-5 gap-6">
-            {recommendations.slice(0, 5).map((item) => (
-              <MovieCard
-                key={item.id}
-                title={item.title || item.name}
-                year={(item.release_date || item.first_air_date)?.split("-")[0]}
-                slug={`${item.id}-${(item.title || item.name).toLowerCase().replace(/[^a-z0-9]+/g, "-")}`}
-                poster={item.poster_path}
-              />
-            ))}
-          </div>
-        </section>
+        <section className="pt-16 mt-16 border-t border-white/5">
+  <div className="px-6 md:px-12 mb-8">
+    <h2 className="text-lg font-bold uppercase tracking-wide text-white">
+      Recommended for you
+    </h2>
+  </div>
+
+  <div className="px-6 md:px-12">
+    <div className="overflow-x-auto no-scrollbar rounded-3xl bg-black/20">
+      <div className="flex gap-4 px-4 py-4 snap-x snap-mandatory">
+        {recommendations.slice(0, 10).map((item) => (
+          <MovieCard
+            key={item.id}
+            title={item.title || item.name}
+            year={(item.release_date || item.first_air_date)?.split("-")[0]}
+            slug={`${item.id}-${(item.title || item.name).toLowerCase().replace(/[^a-z0-9]+/g, "-")}`}
+            poster={item.poster_path}
+          />
+        ))}
+      </div>
+    </div>
+  </div>
+</section>
       </div>
     </div>
   );

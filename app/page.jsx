@@ -25,17 +25,17 @@ export default async function HomePage() {
   const featuredMovie = trendingMovies?.[Math.floor(Math.random() * trendingMovies.length)];
 
   const MovieSection = ({ title, data }) => (
-    <section className="mb-16">
-      <div className="px-6 md:px-12 mb-5 flex items-center gap-3">
-        <div className="h-5 w-1 bg-brand-red rounded-full" />
-        <h2 className="text-lg font-bold uppercase tracking-wide text-white/90">
+    <section className="mb-12 md:mb-16">
+      <div className="px-6 md:px-12 mb-4 md:mb-5 flex items-center gap-2 md:gap-3">
+        <div className="h-4 md:h-5 w-1 bg-brand-red rounded-full" />
+        <h2 className="text-base md:text-lg font-bold uppercase tracking-wide text-white/90">
           {title}
         </h2>
       </div>
 
       <div className="relative px-4 md:px-10">
-        <div className="overflow-x-auto no-scrollbar rounded-3xl bg-black/20">
-          <div className="flex gap-4 px-2 md:px-4 py-4 snap-x snap-mandatory">
+        <div className="overflow-x-auto no-scrollbar rounded-2xl md:rounded-3xl bg-black/20">
+          <div className="flex gap-3 md:gap-4 px-2 md:px-4 py-3 md:py-4 snap-x snap-mandatory">
             {data?.map((movie) => {
               // LOGIKA ANTI-ERROR (PENTING!)
               const displayTitle = movie.title || movie.name || "Untitled";
@@ -66,7 +66,8 @@ export default async function HomePage() {
 
   return (
     <div className="flex flex-col overflow-x-hidden bg-black min-h-screen">
-      <section className="relative min-h-screen flex items-end pb-56 md:pb-72 lg:pb-96 overflow-hidden">
+      {/* HERO SECTION - Responsive di semua breakpoint */}
+      <section className="relative min-h-screen flex items-end pb-20 sm:pb-24 md:pb-32 lg:pb-40 overflow-hidden">
         {featuredMovie && (
           <>
             <div className="absolute inset-0 z-0">
@@ -106,18 +107,18 @@ export default async function HomePage() {
             </div>
 
             <div className="relative z-20 px-6 md:px-12 max-w-4xl">
-              <h3 className="text-brand-magenta text-[10px] font-bold uppercase tracking-[0.35em] mb-4">
+              <h3 className="text-brand-magenta text-[9px] sm:text-[10px] font-bold uppercase tracking-[0.3em] sm:tracking-[0.35em] mb-3 md:mb-4">
                 Featured Content
               </h3>
-              <h1 className="text-4xl md:text-7xl font-black text-white mb-6 leading-tight">
+              <h1 className="text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-black text-white mb-4 sm:mb-5 md:mb-6 leading-tight">
                 {featuredMovie?.title || featuredMovie?.name}
               </h1>
-              <p className="text-gray-300 max-w-2xl mb-10 line-clamp-3">
+              <p className="text-sm sm:text-base text-gray-300 max-w-2xl mb-8 sm:mb-9 md:mb-10 line-clamp-3">
                 {featuredMovie?.overview}
               </p>
               <Link
                 href={`/movie/${featuredMovie?.id}`}
-                className="inline-flex items-center justify-center bg-brand-red text-white text-[11px] font-black py-3 px-10 rounded-full uppercase tracking-widest transition-all duration-300 shadow-[0_0_0_rgba(225,8,19,0)] hover:shadow-[0_0_25px_rgba(225,8,19,0.7)] hover:bg-red-600 hover:brightness-125 hover:scale-105 active:scale-95"
+                className="inline-flex items-center justify-center bg-brand-red text-white text-[10px] sm:text-[11px] font-black py-2.5 sm:py-3 px-8 sm:px-10 rounded-full uppercase tracking-widest transition-all duration-300 shadow-[0_0_0_rgba(225,8,19,0)] hover:shadow-[0_0_25px_rgba(225,8,19,0.7)] hover:bg-red-600 hover:brightness-125 hover:scale-105 active:scale-95"
               >
                 Watch Now
               </Link>
@@ -126,9 +127,9 @@ export default async function HomePage() {
         )}
       </section>
 
-      {/* ================= MOVIE SECTIONS ================= */}
-      <div className="mt-32 md:mt-40 lg:mt-48">
-        <h2 className="px-6 md:px-12 text-3xl font-black text-white italic mb-2 uppercase">Movies</h2>
+      {/* ================= MOVIE SECTIONS - Responsive margin ================= */}
+      <div className="mt-8 sm:mt-10 md:mt-16 lg:mt-20">
+        <h2 className="px-6 md:px-12 text-2xl sm:text-3xl font-black text-white italic mb-2 uppercase">Movies</h2>
 
         {/* Tambahkan .filter(m => m.title) agar Series tidak masuk sini */}
         <MovieSection title="Popular Movies" data={popularMovies?.filter(m => m.title)} />
@@ -137,8 +138,8 @@ export default async function HomePage() {
       </div>
 
       {/* ================= SERIES SECTIONS ================= */}
-      <div className="mt-10">
-        <h2 className="px-6 md:px-12 text-3xl font-black text-white italic mb-2 uppercase">TV Series</h2>
+      <div className="mt-8 sm:mt-10">
+        <h2 className="px-6 md:px-12 text-2xl sm:text-3xl font-black text-white italic mb-2 uppercase">TV Series</h2>
 
         {/* Tambahkan .filter(m => m.name) agar Movie tidak masuk sini */}
         <MovieSection title="Popular Series" data={popularTV?.filter(m => m.name)} />
