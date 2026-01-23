@@ -7,6 +7,7 @@ import {
   getTrendingMovies,
   getPopularTV,
   getTVByGenre,
+  getFreshSeries,
   getMovieVideos,
 } from "@/lib/tmdb";
 
@@ -19,12 +20,14 @@ export default async function HomePage() {
 
   // Ambil Data Series (TV)
   const popularTV = await getPopularTV();
-  const latestTV = await getPopularTV(); // Bisa pakai trending TV kalau ada fungsinya
-  const actionTV = await getTVByGenre(10759); // Action & Adventure (Genre ID TV beda sama Movie)
-  const sciFiTV = await getTVByGenre(10765);  // Sci-Fi & Fantasy (Genre ID TV beda sama Movie)
+  const latestTV = await getPopularTV();
+  const actionTV = await getTVByGenre(10759);
+  const freshSeries = await getFreshSeries();
+  const sciFiTV = await getTVByGenre(10765);
   const featuredMovie = trendingMovies?.[Math.floor(Math.random() * trendingMovies.length)];
 
-  const MovieSection = ({ title, data }) => (
+  // ✅ FIX: Tambah parameter mediaType untuk bedain movie/tv
+  const MovieSection = ({ title, data, mediaType = 'movie' }) => (
     <section className="mb-12 md:mb-16">
       <div className="px-6 md:px-12 mb-4 md:mb-5 flex items-center gap-2 md:gap-3">
         <div className="h-4 md:h-5 w-1 bg-brand-red rounded-full" />
@@ -36,20 +39,23 @@ export default async function HomePage() {
       <div className="relative px-4 md:px-10">
         <div className="overflow-x-auto no-scrollbar rounded-2xl md:rounded-3xl bg-black/20">
           <div className="flex gap-3 md:gap-4 px-2 md:px-4 py-3 md:py-4 snap-x snap-mandatory">
-            {data?.map((movie) => {
-              // LOGIKA ANTI-ERROR (PENTING!)
-              const displayTitle = movie.title || movie.name || "Untitled";
-              const displayYear = (movie.release_date || movie.first_air_date)?.split("-")[0];
-              const safeSlug = `${movie.id}-${displayTitle
+            {data?.map((item) => {
+              // ✅ DETEKSI TYPE: Cek dari media_type atau dari field khas movie/tv
+              const type = item.media_type || mediaType || (item.first_air_date ? 'tv' : 'movie');
+              const displayTitle = item.title || item.name || "Untitled";
+              const displayYear = (item.release_date || item.first_air_date)?.split("-")[0];
+              const safeSlug = `${item.id}-${displayTitle
                 .toLowerCase()
                 .replace(/[^a-z0-9]+/g, "-")
                 .replace(/^-+|-+$/g, "")}`;
 
               return (
                 <MovieCard
-                  key={movie.id}
+                  key={item.id}
+                  id={item.id}              // ✅ Pass ID asli
+                  type={type}               // ✅ Pass type (movie/tv)
                   title={displayTitle}
-                  poster={movie.poster_path}
+                  poster={item.poster_path}
                   year={displayYear}
                   slug={safeSlug}
                 />
@@ -61,18 +67,17 @@ export default async function HomePage() {
     </section>
   );
 
-  const videos = await getMovieVideos(featuredMovie.id);
+  const videos = await getMovieVideos(featuredMovie?.id, featuredMovie?.media_type || 'movie');
   const trailer = videos?.find(v => v.type === "Trailer" && v.site === "YouTube") || videos?.[0];
 
   return (
     <div className="flex flex-col overflow-x-hidden bg-black min-h-screen">
-      {/* HERO SECTION - Responsive di semua breakpoint */}
+      {/* HERO SECTION */}
       <section className="relative min-h-screen flex items-end pb-20 sm:pb-24 md:pb-32 lg:pb-40 overflow-hidden">
         {featuredMovie && (
           <>
             <div className="absolute inset-0 z-0">
               {trailer ? (
-                /* CONTAINER PEMAKSA - Fixed untuk cover penuh */
                 <div className="absolute inset-0 w-full h-full">
                   <iframe
                     src={`https://www.youtube.com/embed/${trailer.key}?autoplay=1&mute=1&controls=0&loop=1&playlist=${trailer.key}&rel=0&modestbranding=1&iv_load_policy=3&playsinline=1&disablekb=1&fs=0&showinfo=0&enablejsapi=1&origin=${typeof window !== 'undefined' ? window.location.origin : ''}`}
@@ -96,12 +101,11 @@ export default async function HomePage() {
               ) : (
                 <img
                   src={`https://image.tmdb.org/t/p/original${featuredMovie.backdrop_path}`}
-                  alt={featuredMovie.title}
+                  alt={featuredMovie.title || featuredMovie.name}
                   className="w-full h-full object-cover opacity-50"
                 />
               )}
 
-              {/* OVERLAY AGAR TEXT TERBACA */}
               <div className="absolute inset-0 z-10 bg-gradient-to-t from-black via-black/40 to-transparent" />
               <div className="absolute inset-0 z-10 bg-gradient-to-r from-black via-transparent to-transparent opacity-80" />
             </div>
@@ -117,7 +121,7 @@ export default async function HomePage() {
                 {featuredMovie?.overview}
               </p>
               <Link
-                href={`/movie/${featuredMovie?.id}`}
+                href={`/movie/${featuredMovie?.id}?type=${featuredMovie?.media_type || 'movie'}`}
                 className="inline-flex items-center justify-center bg-brand-red text-white text-[10px] sm:text-[11px] font-black py-2.5 sm:py-3 px-8 sm:px-10 rounded-full uppercase tracking-widest transition-all duration-300 shadow-[0_0_0_rgba(225,8,19,0)] hover:shadow-[0_0_25px_rgba(225,8,19,0.7)] hover:bg-red-600 hover:brightness-125 hover:scale-105 active:scale-95"
               >
                 Watch Now
@@ -127,24 +131,51 @@ export default async function HomePage() {
         )}
       </section>
 
-      {/* ================= MOVIE SECTIONS - Responsive margin ================= */}
+      {/* ================= MOVIE SECTIONS ================= */}
       <div className="mt-8 sm:mt-10 md:mt-16 lg:mt-20">
         <h2 className="px-6 md:px-12 text-2xl sm:text-3xl font-black text-white italic mb-2 uppercase">Movies</h2>
 
-        {/* Tambahkan .filter(m => m.title) agar Series tidak masuk sini */}
-        <MovieSection title="Popular Movies" data={popularMovies?.filter(m => m.title)} />
-        <MovieSection title="Action Packed" data={actionMovies?.filter(m => m.title)} />
-        <MovieSection title="Sci-Fi Adventures" data={sciFiMovies?.filter(m => m.title)} />
+        <MovieSection 
+          title="Popular Movies" 
+          data={popularMovies?.filter(m => m.title)} 
+          mediaType="movie" 
+        />
+        <MovieSection 
+          title="Action Packed" 
+          data={actionMovies?.filter(m => m.title)} 
+          mediaType="movie" 
+        />
+        <MovieSection 
+          title="Sci-Fi Adventures" 
+          data={sciFiMovies?.filter(m => m.title)} 
+          mediaType="movie" 
+        />
       </div>
 
       {/* ================= SERIES SECTIONS ================= */}
       <div className="mt-8 sm:mt-10">
         <h2 className="px-6 md:px-12 text-2xl sm:text-3xl font-black text-white italic mb-2 uppercase">TV Series</h2>
 
-        {/* Tambahkan .filter(m => m.name) agar Movie tidak masuk sini */}
-        <MovieSection title="Popular Series" data={popularTV?.filter(m => m.name)} />
-        <MovieSection title="TV Action & Adventure" data={actionTV?.filter(m => m.name)} />
-        <MovieSection title="TV Sci-Fi & Fantasy" data={sciFiTV?.filter(m => m.name)} />
+        <MovieSection 
+          title="Fresh Series" 
+          data={freshSeries?.filter(m => m.name)} 
+          mediaType="tv" 
+        />
+        <MovieSection 
+          title="Popular Series" 
+          data={popularTV?.filter(m => m.name)} 
+          mediaType="tv" 
+        />
+        <MovieSection 
+          title="TV Action & Adventure" 
+          data={actionTV?.filter(m => m.name)} 
+          mediaType="tv" 
+        />
+        <MovieSection 
+          title="TV Sci-Fi & Fantasy" 
+          data={sciFiTV?.filter(m => m.name)} 
+          mediaType="tv" 
+        />
       </div>
     </div>
   );

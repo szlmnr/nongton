@@ -1,13 +1,18 @@
 import Link from "next/link";
 import Image from "next/image";
 
-export default function MovieCard({ title, year, slug, poster }) {
+// ✅ Tambah id dan type di props
+export default function MovieCard({ id, type, title, year, slug, poster }) {
   if (!title) return null;
 
   const imageUrl = `https://image.tmdb.org/t/p/w500${poster}`;
 
   return (
-    <Link href={`/movie/${slug}`} className="group relative block">
+    // ✅ Link sekarang include id dan type
+    <Link 
+      href={`/movie/${id}?type=${type}`} 
+      className="group relative block"
+    >
       <div className="relative w-[160px] sm:w-[180px] md:w-[220px] lg:w-[240px] aspect-[2/3] overflow-hidden rounded-2xl md:rounded-3xl bg-zinc-900 shadow-xl transition-all duration-300 hover:scale-105">
         
         <div className="absolute inset-0 z-0">
@@ -39,7 +44,7 @@ export default function MovieCard({ title, year, slug, poster }) {
               <div className="flex justify-between items-center">
                 <div>
                   <span className="block text-[7px] sm:text-[8px] font-black text-white/40 uppercase leading-none mb-1 tracking-wider">
-                    Release Year
+                    {type === 'tv' ? 'TV Series' : 'Release Year'}
                   </span>
                   <span className="block text-xs sm:text-sm font-black text-white leading-none">
                     {year || "2025"}

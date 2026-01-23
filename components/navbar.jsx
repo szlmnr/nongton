@@ -5,7 +5,7 @@ export default function Navbar() {
   return (
     <nav className="fixed top-0 w-full z-[9999] backdrop-blur-xl bg-black/40 border-b border-white/5 px-4 md:px-12 py-4">
       <div className="max-w-7xl mx-auto flex items-center gap-3 md:gap-6">
-        
+
         {/* SISI KIRI: Logo & Navigasi */}
         <div className="flex gap-4 md:gap-10 items-center">
           <Link href="/">
@@ -13,12 +13,12 @@ export default function Navbar() {
               SALSTREAM
             </h1>
           </Link>
-          
-          <div className="hidden md:flex gap-8 text-xs font-bold uppercase tracking-[0.2em]">
+
+          <div className="hidden md:flex gap-8 text-xs font-bold uppercase tracking-[0.2em] items-center">
             <Link href="/" className="text-white hover:text-red-500 transition-colors">
               Nongton
             </Link>
-            <Link href="/dengerin" className="text-white hover:text-red-500 transition-colors">
+            <Link href="/dengerin" className="text-white hover:text-green-500 transition-colors">
               Dengerin
             </Link>
           </div>
