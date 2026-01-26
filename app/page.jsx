@@ -120,8 +120,11 @@ export default async function HomePage() {
               <p className="text-sm sm:text-base text-gray-300 max-w-2xl mb-8 sm:mb-9 md:mb-10 line-clamp-3">
                 {featuredMovie?.overview}
               </p>
-              <Link
-                href={`/movie/${featuredMovie?.id}?type=${featuredMovie?.media_type || 'movie'}`}
+              <Link 
+  href={featuredMovie?.media_type === 'tv' 
+    ? `/tv/${featuredMovie?.id}` 
+    : `/movie/${featuredMovie?.id}`
+  }
                 className="inline-flex items-center justify-center bg-brand-red text-white text-[10px] sm:text-[11px] font-black py-2.5 sm:py-3 px-8 sm:px-10 rounded-full uppercase tracking-widest transition-all duration-300 shadow-[0_0_0_rgba(225,8,19,0)] hover:shadow-[0_0_25px_rgba(225,8,19,0.7)] hover:bg-red-600 hover:brightness-125 hover:scale-105 active:scale-95"
               >
                 Watch Now

@@ -83,14 +83,17 @@ export default function SearchBar() {
           <div className="p-3">
             <p className="px-4 py-2 text-[10px] font-black uppercase tracking-[0.2em] text-gray-500">Hasil Pencarian</p>
             {suggestions.map((movie) => (
-              <div
-                key={movie.id}
-                onClick={() => {
-                  setQuery(movie.title);
-                  router.push(`/search?q=${encodeURIComponent(movie.title)}`);
-                }}
-                className="flex items-center gap-4 px-4 py-3 hover:bg-red-600/20 rounded-[1.2rem] cursor-pointer transition-all duration-200 group/item mb-1"
-              >
+  <div
+    key={movie.id}
+    onClick={() => {
+      // ✅ FIX: Langsung arahkan ke detail, bukan ke page search lagi
+      // Ini bakal mencegah "undefined" karena ID langsung diambil dari objek movie TMDB
+      router.push(`/movie/${movie.id}`); 
+      setQuery(''); // Clear input
+      setIsFocused(false);
+    }}
+    className="flex items-center gap-4 px-4 py-3 hover:bg-red-600/20 rounded-[1.2rem] cursor-pointer transition-all duration-200 group/item mb-1"
+  >
                 {/* Poster Kecil */}
                 <div className="relative shrink-0">
                    <img

@@ -1,18 +1,17 @@
 import Link from "next/link";
 import Image from "next/image";
 
-// ✅ Tambah id dan type di props
+// ✅ Link sekarang beda route: /movie/... atau /tv/...
 export default function MovieCard({ id, type, title, year, slug, poster }) {
   if (!title) return null;
 
   const imageUrl = `https://image.tmdb.org/t/p/w500${poster}`;
+  
+  // ✅ Tentukan route berdasarkan type
+  const href = type === 'tv' ? `/tv/${id}` : `/movie/${id}`;
 
   return (
-    // ✅ Link sekarang include id dan type
-    <Link 
-      href={`/movie/${id}?type=${type}`} 
-      className="group relative block"
-    >
+    <Link href={href} className="group relative block">
       <div className="relative w-[160px] sm:w-[180px] md:w-[220px] lg:w-[240px] aspect-[2/3] overflow-hidden rounded-2xl md:rounded-3xl bg-zinc-900 shadow-xl transition-all duration-300 hover:scale-105">
         
         <div className="absolute inset-0 z-0">
