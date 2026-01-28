@@ -143,14 +143,15 @@ export default async function TVDetailPage({ params, searchParams }) {
             ></iframe>
           </div>
 
-          {/* SERVER SELECTOR */}
-          <div className="flex flex-wrap items-center gap-3 mt-6 p-4 bg-zinc-900/50 border border-white/5 rounded-2xl backdrop-blur-md">
-            <div className="flex items-center gap-2 mr-2">
-              <div className="w-1.5 h-1.5 rounded-full bg-neon-yellow shadow-[0_0_8px_#ccff00]" />
+          {/* SERVER SELECTOR - ✅ Fixed: 1 Row 4 Columns di Mobile */}
+          <div className="flex flex-col gap-3 mt-6 p-4 bg-zinc-900/50 border border-white/5 rounded-2xl backdrop-blur-md">
+            <div className="flex items-center gap-2">
+              <div className="w-1.5 h-1.5 rounded-full bg-green-500 shadow-[0_0_8px_#22c55e] animate-pulse" />
               <span className="text-[10px] font-black uppercase tracking-widest text-zinc-400">Pilih Server:</span>
             </div>
 
-            <div className="flex flex-wrap gap-2">
+            {/* ✅ Grid 4 Columns di semua breakpoint */}
+            <div className="grid grid-cols-4 gap-2">
               {[
                 { id: "1", label: "Alpha", provider: "Vidsrc.to" },
                 { id: "2", label: "Beta", provider: "Vidsrc.xyz" },
@@ -164,34 +165,34 @@ export default async function TVDetailPage({ params, searchParams }) {
                     key={srv.id}
                     href={`?s=${currentSeason}&e=${currentEpisode}&server=${srv.id}`}
                     scroll={false}
-                    className={`group relative overflow-hidden px-5 py-2.5 rounded-xl transition-all duration-300 border shadow-lg ${
+                    className={`group relative overflow-hidden px-2 xs:px-3 sm:px-5 py-2 sm:py-2.5 rounded-lg sm:rounded-xl transition-all duration-300 border shadow-lg ${
                       isSelected
-                        ? "bg-neon-yellow border-neon-yellow shadow-neon-yellow/20"
-                        : "bg-zinc-900 border-white/5 hover:border-neon-yellow/40"
+                        ? "bg-green-600 border-green-500 shadow-green-500/30"
+                        : "bg-zinc-900 border-white/5 hover:border-green-500/40"
                     }`}
                   >
                     <div className="relative z-10 flex flex-col items-start leading-tight">
-                      <span className={`text-[10px] font-black uppercase ${
-                        isSelected ? "text-zinc-950" : "text-white"
+                      <span className={`text-[8px] xs:text-[9px] sm:text-[10px] font-black uppercase ${
+                        isSelected ? "text-white" : "text-white"
                       }`}>
-                        Server {srv.label}
+                        {srv.label}
                       </span>
-                      <span className={`text-[9px] font-bold ${
-                        isSelected ? "text-black/70" : "text-zinc-500"
+                      <span className={`text-[7px] xs:text-[8px] sm:text-[9px] font-bold ${
+                        isSelected ? "text-green-100" : "text-zinc-500"
                       }`}>
                         {srv.provider}
                       </span>
                     </div>
 
                     {!isSelected && (
-                      <div className="absolute inset-0 bg-gradient-to-tr from-neon-yellow/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                      <div className="absolute inset-0 bg-gradient-to-tr from-green-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
                     )}
                   </Link>
                 );
               })}
             </div>
 
-            <div className="ml-auto hidden md:block">
+            <div className="hidden md:block">
               <p className="text-[9px] text-zinc-500 italic">Gunakan server Beta/Gamma jika Alpha 'Unavailable'</p>
             </div>
           </div>
@@ -204,19 +205,25 @@ export default async function TVDetailPage({ params, searchParams }) {
                   Episodes <span className="text-red-600 ml-2 text-sm">Season {currentSeason}</span>
                 </h3>
 
-                <div key={`dropdown-s-${currentSeason}`} className="relative group z-[100]">
-                  <div className="px-3 py-1 rounded-md text-[10px] font-bold border border-red-600 bg-red-600 text-white flex items-center gap-2 cursor-default shadow-[0_0_15px_rgba(220,38,38,0.3)]">
+                {/* ✅ FIXED: Season Dropdown Mobile Clickable */}
+                <div className="relative group z-[100]">
+                  {/* Trigger Button */}
+                  <button 
+                    type="button"
+                    className="px-3 py-1 rounded-md text-[10px] font-bold border border-red-600 bg-red-600 text-white flex items-center gap-2 shadow-[0_0_15px_rgba(220,38,38,0.3)] hover:bg-red-700 transition-colors"
+                  >
                     S{currentSeason}
                     <span className="text-[8px] opacity-80">▼</span>
-                  </div>
+                  </button>
 
-                  <div className="absolute top-full right-0 mt-1 w-32 bg-zinc-900 border border-white/10 rounded-md shadow-[0_10px_30px_rgba(0,0,0,0.8)] opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 overflow-hidden">
+                  {/* Dropdown - Mobile Touch Friendly */}
+                  <div className="absolute top-full right-0 mt-1 w-32 bg-zinc-900 border border-white/10 rounded-md shadow-[0_10px_30px_rgba(0,0,0,0.8)] opacity-0 invisible group-hover:opacity-100 group-hover:visible group-focus-within:opacity-100 group-focus-within:visible transition-all duration-200 overflow-hidden">
                     <div className="max-h-60 overflow-y-auto no-scrollbar bg-zinc-950">
                       {tvShow.seasons?.filter(s => s.season_number > 0).map(s => (
                         <a
                           key={s.id}
                           href={`?s=${s.season_number}&e=1`}
-                          className={`block px-4 py-2.5 text-[10px] font-bold uppercase border-b border-white/5 last:border-0 transition-colors ${
+                          className={`block px-4 py-2.5 text-[10px] font-bold uppercase border-b border-white/5 last:border-0 transition-colors active:bg-red-600/40 ${
                             currentSeason === s.season_number
                               ? 'bg-red-600/20 text-red-500'
                               : 'text-zinc-400 hover:bg-white/5 hover:text-white'

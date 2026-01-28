@@ -52,12 +52,14 @@ export default async function HomePage() {
               return (
                 <MovieCard
                   key={item.id}
-                  id={item.id}              // ✅ Pass ID asli
-                  type={type}               // ✅ Pass type (movie/tv)
+                  id={item.id}
+                  type={type}
                   title={displayTitle}
                   poster={item.poster_path}
                   year={displayYear}
-                  slug={safeSlug}
+                  voteAverage={item.vote_average}      // ✅ Tambah ini
+                  genres={item.genres || []}            // ✅ Tambah ini (tapi mungkin kosong dari list)
+                  runtime={item.runtime}                // ✅ Tambah ini (biasanya cuma ada di detail)
                 />
               );
             })}
@@ -120,11 +122,11 @@ export default async function HomePage() {
               <p className="text-sm sm:text-base text-gray-300 max-w-2xl mb-8 sm:mb-9 md:mb-10 line-clamp-3">
                 {featuredMovie?.overview}
               </p>
-              <Link 
-  href={featuredMovie?.media_type === 'tv' 
-    ? `/tv/${featuredMovie?.id}` 
-    : `/movie/${featuredMovie?.id}`
-  }
+              <Link
+                href={featuredMovie?.media_type === 'tv'
+                  ? `/tv/${featuredMovie?.id}`
+                  : `/movie/${featuredMovie?.id}`
+                }
                 className="inline-flex items-center justify-center bg-brand-red text-white text-[10px] sm:text-[11px] font-black py-2.5 sm:py-3 px-8 sm:px-10 rounded-full uppercase tracking-widest transition-all duration-300 shadow-[0_0_0_rgba(225,8,19,0)] hover:shadow-[0_0_25px_rgba(225,8,19,0.7)] hover:bg-red-600 hover:brightness-125 hover:scale-105 active:scale-95"
               >
                 Watch Now
@@ -138,20 +140,20 @@ export default async function HomePage() {
       <div className="mt-8 sm:mt-10 md:mt-16 lg:mt-20">
         <h2 className="px-6 md:px-12 text-2xl sm:text-3xl font-black text-white italic mb-2 uppercase">Movies</h2>
 
-        <MovieSection 
-          title="Popular Movies" 
-          data={popularMovies?.filter(m => m.title)} 
-          mediaType="movie" 
+        <MovieSection
+          title="Popular Movies"
+          data={popularMovies?.filter(m => m.title)}
+          mediaType="movie"
         />
-        <MovieSection 
-          title="Action Packed" 
-          data={actionMovies?.filter(m => m.title)} 
-          mediaType="movie" 
+        <MovieSection
+          title="Action Packed"
+          data={actionMovies?.filter(m => m.title)}
+          mediaType="movie"
         />
-        <MovieSection 
-          title="Sci-Fi Adventures" 
-          data={sciFiMovies?.filter(m => m.title)} 
-          mediaType="movie" 
+        <MovieSection
+          title="Sci-Fi Adventures"
+          data={sciFiMovies?.filter(m => m.title)}
+          mediaType="movie"
         />
       </div>
 
@@ -159,25 +161,25 @@ export default async function HomePage() {
       <div className="mt-8 sm:mt-10">
         <h2 className="px-6 md:px-12 text-2xl sm:text-3xl font-black text-white italic mb-2 uppercase">TV Series</h2>
 
-        <MovieSection 
-          title="Fresh Series" 
-          data={freshSeries?.filter(m => m.name)} 
-          mediaType="tv" 
+        <MovieSection
+          title="Fresh Series"
+          data={freshSeries?.filter(m => m.name)}
+          mediaType="tv"
         />
-        <MovieSection 
-          title="Popular Series" 
-          data={popularTV?.filter(m => m.name)} 
-          mediaType="tv" 
+        <MovieSection
+          title="Popular Series"
+          data={popularTV?.filter(m => m.name)}
+          mediaType="tv"
         />
-        <MovieSection 
-          title="TV Action & Adventure" 
-          data={actionTV?.filter(m => m.name)} 
-          mediaType="tv" 
+        <MovieSection
+          title="TV Action & Adventure"
+          data={actionTV?.filter(m => m.name)}
+          mediaType="tv"
         />
-        <MovieSection 
-          title="TV Sci-Fi & Fantasy" 
-          data={sciFiTV?.filter(m => m.name)} 
-          mediaType="tv" 
+        <MovieSection
+          title="TV Sci-Fi & Fantasy"
+          data={sciFiTV?.filter(m => m.name)}
+          mediaType="tv"
         />
       </div>
     </div>
