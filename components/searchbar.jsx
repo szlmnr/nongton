@@ -10,7 +10,7 @@ export default function SearchBar() {
   const router = useRouter();
 
   // 1. MASUKKAN TOKEN PANJANG LU DI SINI
-  const READ_ACCESS_TOKEN = "PASTE_TOKEN_PANJANG_LU_DI_SINI";
+  const READ_ACCESS_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJkYWI0OTc0M2Y1MmNmZjZhMzQ2OTc4OTJmMDM4MjJmMSIsIm5iZiI6MTc2NjQxNzE0MC4wMTgsInN1YiI6IjY5NDk2MmY0YmU0ZmU1NzIzOTdhYzYzMiIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.MmMTIRrlgqPIkVmZbVScFbISbz7bhAIEKCvMzq2fA_g";
 
   useEffect(() => {
     const fetchSuggestions = async () => {
@@ -32,7 +32,7 @@ export default function SearchBar() {
           }
         );
         const data = await res.json();
-        
+
         if (data.results) {
           // Ambil 6 hasil teratas
           setSuggestions(data.results.slice(0, 6));
@@ -66,53 +66,57 @@ export default function SearchBar() {
           onBlur={() => setTimeout(() => setIsFocused(false), 200)}
           onChange={(e) => setQuery(e.target.value)}
           className={`w-full bg-neutral-900/80 backdrop-blur-md text-white text-base px-7 py-4 rounded-full outline-none border-2 transition-all duration-500
-            ${isFocused 
-              ? "border-red-600 shadow-[0_0_30px_rgba(220,38,38,0.6)] bg-black scale-[1.02]" 
+            ${isFocused
+              ? "border-red-600 shadow-[0_0_30px_rgba(220,38,38,0.6)] bg-black scale-[1.02]"
               : "border-white/10 hover:border-white/30"
             }`}
         />
         {/* Icon Search */}
-        <div className={`absolute right-6 top-1/2 -translate-y-1/2 transition-colors duration-300 ${isFocused ? 'text-red-500' : 'text-gray-500'}`}>
+        <button
+          type="submit"
+          className={`absolute right-6 top-1/2 -translate-y-1/2 z-20 transition-all duration-300 hover:scale-110 active:scale-90 ${isFocused ? 'text-red-500' : 'text-gray-500'}`}
+        >
           <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-        </div>
+        </button>
       </form>
-
-      {/* DROPDOWN SARAN (Glassmorphism) */}
+      
+      {/* SUGGESTIONS DROPDOWN */}
       {isFocused && suggestions.length > 0 && (
-        <div className="absolute top-[110%] left-0 right-0 bg-black/40 backdrop-blur-2xl border border-white/10 rounded-[2rem] overflow-hidden shadow-[0_25px_50px_-12px_rgba(0,0,0,0.8)] z-[9999] animate-in fade-in slide-in-from-top-2 duration-300">
-          <div className="p-3">
-            <p className="px-4 py-2 text-[10px] font-black uppercase tracking-[0.2em] text-gray-500">Hasil Pencarian</p>
+        <div className="absolute top-[105%] left-0 right-0 bg-neutral-950/95 backdrop-blur-3xl border border-white/5 rounded-[1.5rem] overflow-hidden shadow-[0_25px_50px_-12px_rgba(0,0,0,0.9)] z-[9999] animate-in fade-in slide-in-from-top-1 duration-300">
+          <div className="p-2"> {/* Padding kontainer diperkecil */}
+            <p className="px-3 py-1 text-[9px] font-black uppercase tracking-[0.2em] text-gray-500 mb-1">Hasil Pencarian</p>
+
             {suggestions.map((movie) => (
-  <div
-    key={movie.id}
-    onClick={() => {
-      // ✅ FIX: Langsung arahkan ke detail, bukan ke page search lagi
-      // Ini bakal mencegah "undefined" karena ID langsung diambil dari objek movie TMDB
-      router.push(`/movie/${movie.id}`); 
-      setQuery(''); // Clear input
-      setIsFocused(false);
-    }}
-    className="flex items-center gap-4 px-4 py-3 hover:bg-red-600/20 rounded-[1.2rem] cursor-pointer transition-all duration-200 group/item mb-1"
-  >
-                {/* Poster Kecil */}
+              <div
+                key={movie.id}
+                onClick={() => {
+                  router.push(`/movie/${movie.id}`);
+                  setQuery('');
+                  setIsFocused(false);
+                }}
+                // ✅ Padding vertikal diubah dari py-3 ke py-1.5 agar lebih "pepet"
+                className="flex items-center gap-3 px-3 py-1.5 hover:bg-red-600/20 rounded-xl cursor-pointer transition-all duration-200 group/item mb-0.5"
+              >
+                {/* Poster Lebih Kecil (Lebih Proporsional) */}
                 <div className="relative shrink-0">
-                   <img
+                  <img
                     src={movie.poster_path ? `https://image.tmdb.org/t/p/w92${movie.poster_path}` : 'https://via.placeholder.com/40x60?text=No+Img'}
-                    className="w-12 h-16 object-cover rounded-xl shadow-lg group-hover/item:scale-105 transition-transform duration-300"
+                    className="w-8 h-12 object-cover rounded-lg shadow-md group-hover/item:scale-105 transition-transform duration-300"
                     alt={movie.title}
                   />
                 </div>
 
-                {/* Info Film */}
-                <div className="flex flex-col overflow-hidden">
-                  <span className="text-sm font-bold text-white group-hover/item:text-red-500 transition-colors truncate">
+                {/* Info Film dengan Line Spacing Rapat */}
+                <div className="flex flex-col overflow-hidden leading-tight">
+                  <span className="text-xs font-bold text-white group-hover/item:text-red-500 transition-colors truncate">
                     {movie.title}
                   </span>
-                  <div className="flex items-center gap-2">
-                    <span className="text-[10px] bg-white/10 px-2 py-0.5 rounded text-gray-400">
+                  <div className="flex items-center gap-2 mt-0.5">
+                    <span className="text-[8px] bg-white/10 px-1.5 py-0.5 rounded-md text-gray-400 font-medium">
                       {movie.release_date ? movie.release_date.split('-')[0] : 'N/A'}
                     </span>
-                    <span className="text-[10px] text-yellow-500 flex items-center gap-1">
+
+                    <span className="text-[9px] text-yellow-500 flex items-center gap-0.5">
                       ★ {movie.vote_average?.toFixed(1)}
                     </span>
                   </div>

@@ -312,6 +312,33 @@ export default async function TVDetailPage({ params, searchParams }) {
               <h3 className="text-zinc-500 uppercase tracking-widest text-[10px] font-black mb-5">Top Cast</h3>
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
                 {cast.map((person) => (
+                  /* 1. Tambahkan Link sebagai pembungkus utama card */
+                  <Link
+                    key={person.id}
+                    href={`/search/cast/${person.id}?name=${encodeURIComponent(person.name)}`}
+                    className="flex items-center gap-3 bg-zinc-900/40 p-3 rounded-xl border border-white/5 hover:bg-zinc-800/60 transition-colors group"
+                  >
+                    <div className="relative w-10 h-10 rounded-full overflow-hidden flex-none">
+                      <Image
+                        src={person.profile_path ? `https://image.tmdb.org/t/p/w185${person.profile_path}` : "/no-avatar.png"}
+                        fill
+                        alt={person.name}
+                        /* 2. Opsional: Tambahkan efek hover pada gambar */
+                        className="object-cover grayscale group-hover:grayscale-0 transition-all"
+                      />
+                    </div>
+                    <div className="min-w-0">
+                      <p className="text-xs font-black truncate uppercase text-zinc-200 group-hover:text-white">{person.name}</p>
+                      <p className="text-[10px] text-zinc-500 truncate">{person.character}</p>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            </section>
+            {/*<section>
+              <h3 className="text-zinc-500 uppercase tracking-widest text-[10px] font-black mb-5">Top Cast</h3>
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+                {cast.map((person) => (
                   <div key={person.id} className="flex items-center gap-3 bg-zinc-900/40 p-3 rounded-xl border border-white/5">
                     <div className="relative w-10 h-10 rounded-full overflow-hidden flex-none">
                       <Image
@@ -328,7 +355,7 @@ export default async function TVDetailPage({ params, searchParams }) {
                   </div>
                 ))}
               </div>
-            </section>
+            </section>*/}
           </div>
 
           <aside className="space-y-6 bg-zinc-900/20 p-8 rounded-3xl border border-white/5 h-fit backdrop-blur-sm">

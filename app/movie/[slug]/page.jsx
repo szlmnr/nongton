@@ -159,21 +159,18 @@ export default async function MovieDetailPage({ params, searchParams }) {
                     key={srv.id}
                     href={`?server=${srv.id}`}
                     scroll={false}
-                    className={`group relative overflow-hidden px-2 xs:px-3 sm:px-5 py-2 sm:py-2.5 rounded-lg sm:rounded-xl transition-all duration-300 border shadow-lg ${
-                      isSelected
+                    className={`group relative overflow-hidden px-2 xs:px-3 sm:px-5 py-2 sm:py-2.5 rounded-lg sm:rounded-xl transition-all duration-300 border shadow-lg ${isSelected
                         ? "bg-green-600 border-green-500 shadow-green-500/30"
                         : "bg-zinc-900 border-white/5 hover:border-green-500/40"
-                    }`}
+                      }`}
                   >
                     <div className="relative z-10 flex flex-col items-start leading-tight">
-                      <span className={`text-[8px] xs:text-[9px] sm:text-[10px] font-black uppercase ${
-                        isSelected ? "text-white" : "text-white"
-                      }`}>
+                      <span className={`text-[8px] xs:text-[9px] sm:text-[10px] font-black uppercase ${isSelected ? "text-white" : "text-white"
+                        }`}>
                         {srv.label}
                       </span>
-                      <span className={`text-[7px] xs:text-[8px] sm:text-[9px] font-bold ${
-                        isSelected ? "text-green-100" : "text-zinc-500"
-                      }`}>
+                      <span className={`text-[7px] xs:text-[8px] sm:text-[9px] font-bold ${isSelected ? "text-green-100" : "text-zinc-500"
+                        }`}>
                         {srv.provider}
                       </span>
                     </div>
@@ -211,20 +208,26 @@ export default async function MovieDetailPage({ params, searchParams }) {
               <h3 className="text-zinc-500 uppercase tracking-widest text-[10px] font-black mb-5">Top Cast</h3>
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
                 {cast.map((person) => (
-                  <div key={person.id} className="flex items-center gap-3 bg-zinc-900/40 p-3 rounded-xl border border-white/5">
+                  /* 1. Tambahkan Link sebagai pembungkus utama card */
+                  <Link
+                    key={person.id}
+                    href={`/search/cast/${person.id}?name=${encodeURIComponent(person.name)}`}
+                    className="flex items-center gap-3 bg-zinc-900/40 p-3 rounded-xl border border-white/5 hover:bg-zinc-800/60 transition-colors group"
+                  >
                     <div className="relative w-10 h-10 rounded-full overflow-hidden flex-none">
                       <Image
                         src={person.profile_path ? `https://image.tmdb.org/t/p/w185${person.profile_path}` : "/no-avatar.png"}
                         fill
                         alt={person.name}
-                        className="object-cover grayscale"
+                        /* 2. Opsional: Tambahkan efek hover pada gambar */
+                        className="object-cover grayscale group-hover:grayscale-0 transition-all"
                       />
                     </div>
                     <div className="min-w-0">
-                      <p className="text-xs font-black truncate uppercase text-zinc-200">{person.name}</p>
+                      <p className="text-xs font-black truncate uppercase text-zinc-200 group-hover:text-white">{person.name}</p>
                       <p className="text-[10px] text-zinc-500 truncate">{person.character}</p>
                     </div>
-                  </div>
+                  </Link>
                 ))}
               </div>
             </section>
