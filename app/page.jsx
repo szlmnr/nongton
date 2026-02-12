@@ -27,13 +27,26 @@ export default async function HomePage() {
   const featuredMovie = trendingMovies?.[Math.floor(Math.random() * trendingMovies.length)];
 
   // ✅ FIX: Tambah parameter mediaType untuk bedain movie/tv
-  const MovieSection = ({ title, data, mediaType = 'movie' }) => (
+  const MovieSection = ({ title, data, mediaType = 'movie', genreId }) => (
     <section className="mb-12 md:mb-16">
-      <div className="px-6 md:px-12 mb-4 md:mb-5 flex items-center gap-2 md:gap-3">
-        <div className="h-4 md:h-5 w-1 bg-brand-red rounded-full" />
-        <h2 className="text-base md:text-lg font-bold uppercase tracking-wide text-white/90">
-          {title}
-        </h2>
+      {/* HEADER AREA */}
+      <div className="px-6 md:px-12 mb-4 md:mb-5 flex items-center justify-between"> {/* Tambah justify-between */}
+
+        <div className="flex items-center gap-2 md:gap-3">
+          <div className="h-4 md:h-5 w-1 bg-brand-red rounded-full" />
+          <h2 className="text-base md:text-lg font-bold uppercase tracking-wide text-white/90">
+            {title}
+          </h2>
+        </div>
+
+        {/* TOMBOL SEE ALL: Logic baru di sini tanpa ganggu list film */}
+        {genreId && (
+          <Link
+            href={`/${mediaType === 'tv' ? 'tv' : 'movie'}/genre/${genreId}`}
+            className="inline-flex items-center justify-center bg-brand-red text-white text-[12px] sm:text-[13px] font-black py-1.5 sm:py-2 px-5 sm:px-6 rounded-full uppercase tracking-widest transition-all duration-300 hover:scale-105 active:scale-95"          >
+            See All
+          </Link>
+        )}
       </div>
 
       <div className="relative px-4 md:px-10">
@@ -149,11 +162,13 @@ export default async function HomePage() {
           title="Action Packed"
           data={actionMovies?.filter(m => m.title)}
           mediaType="movie"
+          genreId={28}
         />
         <MovieSection
           title="Sci-Fi Adventures"
           data={sciFiMovies?.filter(m => m.title)}
           mediaType="movie"
+          genreId={878}
         />
       </div>
 
@@ -175,11 +190,13 @@ export default async function HomePage() {
           title="TV Action & Adventure"
           data={actionTV?.filter(m => m.name)}
           mediaType="tv"
+          genreId={10759}
         />
         <MovieSection
           title="TV Sci-Fi & Fantasy"
           data={sciFiTV?.filter(m => m.name)}
           mediaType="tv"
+          genreId={10765}
         />
       </div>
     </div>
