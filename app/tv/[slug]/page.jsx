@@ -74,9 +74,9 @@ export default async function TVDetailPage({ params, searchParams }) {
         />
         <div className="absolute inset-0 bg-linear-to-t from-black via-black/20 to-transparent" />
 
-        <div className="absolute bottom-0 left-0 p-8 w-full">
-          <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-end gap-8">
-            <div className="relative w-32 h-48 md:w-44 md:h-64 flex-none shadow-2xl border border-white/10 rounded-2xl overflow-hidden self-center md:self-start">
+        <div className="absolute bottom-0 left-0 p-4 md:p-8 w-full">
+          <div className="max-w-6xl mx-auto flex flex-row items-end gap-5 md:gap-8">
+            <div className="relative w-32 h-48 md:w-44 md:h-64 flex-none shadow-2xl border border-white/10 rounded-2xl overflow-hidden shrink-0">
               <Image
                 src={`https://image.tmdb.org/t/p/w500${tvShow.poster_path}`}
                 fill
@@ -84,17 +84,20 @@ export default async function TVDetailPage({ params, searchParams }) {
                 className="object-cover"
               />
             </div>
-            <div className="space-y-4 pb-4">
+            <div className="flex-1 min-w-0 space-y-3 md:space-y-4 pb-2 md:pb-4">
               <p className="text-neon-yellow text-[10px] font-black uppercase tracking-[0.4em]">
                 TV Series
               </p>
-              <h1 className="text-4xl md:text-6xl font-black uppercase tracking-tighter leading-none">
+              <h1 className="text-2xl md:text-6xl font-black uppercase tracking-tighter leading-none line-clamp-2 md:line-clamp-none">
                 {tvShow.name}
               </h1>
-              <div className="flex flex-wrap items-center gap-4 text-sm font-bold text-zinc-400">
-                <span className="text-neon-yellow">⭐ {tvShow.vote_average?.toFixed(1)}</span>
+              <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-xs md:text-sm font-bold text-zinc-400">
+                <span className="text-neon-yellow">★ {tvShow.vote_average?.toFixed(1)}</span>
                 <span>{tvShow.first_air_date?.split("-")[0]}</span>
-                <div className="flex gap-2">
+                {tvShow.episode_run_time && tvShow.episode_run_time[0] && (
+                  <span>{tvShow.episode_run_time[0]} Min</span>
+                )}
+                <div className="flex flex-wrap gap-2">
                   {tvShow.genres?.slice(0, 2).map(g => (
                     <span key={g.id} className="px-2 py-0.5 bg-white/5 border border-white/10 rounded text-[10px] uppercase">{g.name}</span>
                   ))}
@@ -267,8 +270,8 @@ export default async function TVDetailPage({ params, searchParams }) {
                     S{currentSeason}
                     <span className="text-[8px] opacity-80">▼</span>
                   </button>
-
-                  {/* Dropdown - Mobile Touch Friendly */}
+                  
+                  {/* Dropdown Menu */}
                   <div className="absolute top-full right-0 mt-1 w-32 bg-zinc-900 border border-white/10 rounded-md shadow-[0_10px_30px_rgba(0,0,0,0.8)] opacity-0 invisible group-hover:opacity-100 group-hover:visible group-focus-within:opacity-100 group-focus-within:visible transition-all duration-200 overflow-hidden">
                     <div className="max-h-60 overflow-y-auto no-scrollbar bg-zinc-950">
                       {tvShow.seasons?.filter(s => s.season_number > 0).map(s => (
@@ -288,7 +291,7 @@ export default async function TVDetailPage({ params, searchParams }) {
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-3 gap-4 md:gap-6">
+              <div className="grid grid-cols-2 gap-4 md:gap-6 overflow-y-auto max-h-97 pr-2 scrollbar-hide">
                 {episodes.map((ep) => {
                   const isActive = currentEpisode === ep.episode_number;
 
@@ -297,7 +300,8 @@ export default async function TVDetailPage({ params, searchParams }) {
                       key={`${ep.id}-${ep.episode_number}`}
                       href={`?s=${currentSeason}&e=${ep.episode_number}`}
                       scroll={false}
-                      className={`group relative block aspect-video w-full rounded-xl overflow-hidden bg-zinc-900 border ${isActive ? 'border-red-600' : 'border-white/5'
+                      tabIndex={0}
+                      className={`group relative block aspect-video w-full rounded-xl overflow-hidden bg-zinc-900 border transition-all duration-300 ${isActive ? 'border-red-600' : 'border-white/5'
                         }`}
                     >
                       <Image
@@ -330,12 +334,32 @@ export default async function TVDetailPage({ params, searchParams }) {
                         </div>
                       </div>
 
+                      {!isActive && (
+                        <div className="md:hidden absolute inset-0 z-20 opacity-0 group-hover:opacity-100 group-active:opacity-100 group-focus:opacity-100 focus-within:opacity-100 transition-opacity duration-300 pointer-events-none">
+                          <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/40 to-transparent" />
+                          <div className="absolute bottom-0 left-0 right-0 p-3 pb-4 flex items-end gap-2 transform translate-y-2 group-hover:translate-y-0 group-active:translate-y-0 group-focus:translate-y-0 focus-within:translate-y-0 transition-transform duration-300">
+                            <span
+                              className="text-3xl font-black italic leading-none"
+                              style={{
+                                color: 'transparent',
+                                WebkitTextStroke: '1.5px #ef4444',
+                              }}
+                            >
+                              {String(ep.episode_number).padStart(2, '0')}
+                            </span>
+                            <span className="text-white text-xs font-bold truncate mb-1 border-l border-white/20 pl-2">
+                              {ep.name || `Episode ${ep.episode_number}`}
+                            </span>
+                          </div>
+                        </div>
+                      )}
+
                       {isActive && (
                         <div className="absolute inset-x-0 bottom-0 z-20 flex justify-center">
-                          <div className="relative bg-red-600 px-4 py-1 flex items-center justify-center min-w-[100px] rounded-t-xl h-6">
+                          <div className="relative bg-red-600 px-3 sm:px-4 py-1 flex items-center justify-center min-w-[80px] sm:min-w-[100px] rounded-t-lg sm:rounded-t-xl h-5 sm:h-6">
                             <div className="absolute -left-4 bottom-0 w-4 h-4 bg-red-600 [mask-image:radial-gradient(circle_at_0_0,transparent_16px,black_16px)]" />
                             <div className="absolute -right-4 bottom-0 w-4 h-4 bg-red-600 [mask-image:radial-gradient(circle_at_100%_0,transparent_16px,black_16px)]" />
-                            <span className="text-[10px] font-bold uppercase text-white tracking-widest leading-none">
+                            <span className="text-[8px] sm:text-[10px] font-bold uppercase text-white tracking-[0.15em] sm:tracking-widest leading-none whitespace-nowrap">
                               Now Watching
                             </span>
                           </div>

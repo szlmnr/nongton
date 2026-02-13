@@ -68,15 +68,9 @@ export default async function MovieDetailPage({ params, searchParams }) {
         />
         <div className="absolute inset-0 bg-linear-to-t from-black via-black/20 to-transparent" />
 
-        <div className="absolute bottom-0 left-0 p-8 w-full">
-          <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-end gap-8">
-            <div className="hidden md:block relative w-44 h-64 flex-none shadow-2xl border border-white/10 rounded-2xl overflow-hidden">
-              <Image
-                src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
-                fill
-                alt={movie.title}
-                className="object-cover"
-              />
+        <div className="absolute bottom-0 left-0 p-4 md:p-8 w-full">
+          <div className="max-w-6xl mx-auto flex flex-row items-end gap-5 md:gap-8">
+            <div className="relative w-32 h-48 md:w-44 md:h-64 flex-none shadow-2xl border border-white/10 rounded-2xl overflow-hidden shrink-0">
               <Image
                 src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
                 fill
@@ -84,18 +78,15 @@ export default async function MovieDetailPage({ params, searchParams }) {
                 className="object-cover"
               />
             </div>
-            <div className="space-y-4 pb-4">
+            <div className="flex-1 min-w-0 space-y-3 md:space-y-4 pb-2 md:pb-4">
               <p className="text-neon-yellow text-[10px] font-black uppercase tracking-[0.4em]">
                 SalStream Exclusive
               </p>
-              <h1 className="text-4xl md:text-6xl font-black uppercase tracking-tighter leading-none">
+              <h1 className="text-3xl md:text-6xl font-black uppercase tracking-tighter leading-none line-clamp-2 md:line-clamp-none">
                 {movie.title}
               </h1>
-              <div className="flex flex-wrap items-center gap-4 text-sm font-bold text-zinc-400">
-                <span className="flex items-center gap-1 text-neon-yellow font-bold">
-                  <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" /></svg>
-                  {movie.vote_average?.toFixed(1)}
-                </span>
+              <div className="flex flex-wrap items-center gap-3 md:gap-4 text-xs md:text-sm font-bold text-zinc-400">
+                <span className="text-neon-yellow">★ {movie.vote_average?.toFixed(1)}</span>
                 <span>{movie.release_date?.split("-")[0]}</span>
                 {movie.runtime && <span>{movie.runtime} Min</span>}
                 <div className="flex gap-2">
