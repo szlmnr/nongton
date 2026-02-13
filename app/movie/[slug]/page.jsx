@@ -77,6 +77,12 @@ export default async function MovieDetailPage({ params, searchParams }) {
                 alt={movie.title}
                 className="object-cover"
               />
+              <Image
+                src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
+                fill
+                alt={movie.title}
+                className="object-cover"
+              />
             </div>
             <div className="space-y-4 pb-4">
               <p className="text-neon-yellow text-[10px] font-black uppercase tracking-[0.4em]">
@@ -86,7 +92,10 @@ export default async function MovieDetailPage({ params, searchParams }) {
                 {movie.title}
               </h1>
               <div className="flex flex-wrap items-center gap-4 text-sm font-bold text-zinc-400">
-                <span className="text-neon-yellow">⭐ {movie.vote_average?.toFixed(1)}</span>
+                <span className="flex items-center gap-1 text-neon-yellow font-bold">
+                  <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" /></svg>
+                  {movie.vote_average?.toFixed(1)}
+                </span>
                 <span>{movie.release_date?.split("-")[0]}</span>
                 {movie.runtime && <span>{movie.runtime} Min</span>}
                 <div className="flex gap-2">
@@ -116,10 +125,22 @@ export default async function MovieDetailPage({ params, searchParams }) {
         {/* PLAYER SECTION */}
         <section className="space-y-6">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-neon-yellow/30 pb-4">
-            <div className="flex items-center gap-3">
+            <div className="flex items-center justify-center gap-3 flex-1">
               <div className="w-2.5 h-2.5 rounded-full bg-neon-yellow animate-pulse" />
-              <h2 className="text-2xl font-black uppercase tracking-tighter">
-                SalStream Cinema <span className="text-zinc-500 font-medium">— Full Movie</span>
+              <h2
+                className="text-2xl font-black uppercase tracking-tighter bg-gradient-to-r from-transparent via-white to-transparent bg-[length:200%_100%] bg-clip-text text-transparent opacity-80"
+                style={{
+                  animation: 'spotlight 3s linear infinite',
+                }}
+              >
+                <style dangerouslySetInnerHTML={{
+                  __html: `
+    @keyframes spotlight {
+      0% { background-position: -200% 0; }
+      100% { background-position: 200% 0; }
+    }
+  `}} />
+                SalStream Cinema
               </h2>
             </div>
           </div>
@@ -160,8 +181,8 @@ export default async function MovieDetailPage({ params, searchParams }) {
                     href={`?server=${srv.id}`}
                     scroll={false}
                     className={`group relative overflow-hidden px-2 xs:px-3 sm:px-5 py-2 sm:py-2.5 rounded-lg sm:rounded-xl transition-all duration-300 border shadow-lg ${isSelected
-                        ? "bg-green-600 border-green-500 shadow-green-500/30"
-                        : "bg-zinc-900 border-white/5 hover:border-green-500/40"
+                      ? "bg-green-600 border-green-500 shadow-green-500/30"
+                      : "bg-zinc-900 border-white/5 hover:border-green-500/40"
                       }`}
                   >
                     <div className="relative z-10 flex flex-col items-start leading-tight">

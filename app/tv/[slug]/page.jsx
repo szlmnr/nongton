@@ -76,7 +76,7 @@ export default async function TVDetailPage({ params, searchParams }) {
 
         <div className="absolute bottom-0 left-0 p-8 w-full">
           <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-end gap-8">
-            <div className="hidden md:block relative w-44 h-64 flex-none shadow-2xl border border-white/10 rounded-2xl overflow-hidden">
+            <div className="relative w-32 h-48 md:w-44 md:h-64 flex-none shadow-2xl border border-white/10 rounded-2xl overflow-hidden self-center md:self-start">
               <Image
                 src={`https://image.tmdb.org/t/p/w500${tvShow.poster_path}`}
                 fill
@@ -119,15 +119,70 @@ export default async function TVDetailPage({ params, searchParams }) {
         )}
 
         {/* PLAYER SECTION */}
-        <section className="space-y-6">
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-neon-yellow/30 pb-4">
-            <div className="flex items-center gap-3">
-              <div className="w-2.5 h-2.5 rounded-full bg-neon-yellow animate-pulse" />
-              <h2 className="text-2xl font-black uppercase tracking-tighter">
-                SalStream Cinema <span className="text-zinc-500 font-medium">— Season {currentSeason} Ep {currentEpisode}</span>
+        <section className="space-y-6 overflow-x-hidden w-full">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-white/10 pb-4 w-full">
+
+            {/* Gunakan w-[calc(100vw-2rem)] atau w-full dengan max-w-full */}
+            <div className="flex-1 flex items-center justify-center gap-3 relative overflow-hidden max-w-full">
+
+              <h2
+                className="relative text-2xl font-black uppercase tracking-tighter text-transparent bg-clip-text select-none"
+                data-text="SalStream Series"
+                style={{
+                  animation: 'megaGlitch 3s infinite step-end',
+                  // Tambahkan ini untuk mencegah elemen melebar keluar batas
+                  display: 'inline-block',
+                  maxWidth: '100%'
+                }}
+              >
+                <style dangerouslySetInnerHTML={{
+                  __html: `
+                    @keyframes megaGlitch {
+                      0%, 66% { 
+                        background-image: linear-gradient(to right, #fff, #fff);
+                        transform: skew(0deg);
+                      }
+                      67% { 
+                        background-image: linear-gradient(to right, #ffffff 14.28%, #ffff00 14.28%, #ffff00 28.56%, #00ffff 28.56%, #00ffff 42.84%, #00ff00 42.84%, #00ff00 57.12%, #ff00ff 57.12%, #ff00ff 71.4%, #ff0000 71.4%, #ff0000 85.68%, #0000ff 85.68%);
+                        transform: skew(4deg); /* Skew lebih kecil buat mobile */
+                      }
+                      75% { transform: translateX(1px); }
+                      100% { transform: none; }
+                    }
+
+                    h2::after {
+                      content: attr(data-text);
+                      position: absolute;
+                      left: 0; top: 0;
+                      width: 100%; height: 100%;
+                      background: inherit;
+                      -webkit-background-clip: text;
+                      background-clip: text;
+                      opacity: 0;
+                      animation: noiseLine 3s infinite step-end;
+                    }
+
+                    @keyframes noiseLine {
+                      0%, 66% { opacity: 0; }
+                      67%, 100% { 
+                        opacity: 0.8;
+                        clip-path: inset(45% 0 45% 0);
+                        transform: translateX(-1px);
+                      }
+                    }
+
+                    /* Media Query yang bener: Cuma kecilin ukuran, jangan matiin efek */
+                    @media (max-width: 768px) {
+                      h2 { 
+                        font-size: 1.25rem; /* Teks dikecilin biar gak overflow */
+                        letter-spacing: -0.05em;
+                      }
+                    }
+                  `
+                }} />
+                SalStream Series
               </h2>
             </div>
-            <p className="text-[10px] text-zinc-400 font-bold uppercase">Pilih episode di bawah player</p>
           </div>
 
           <div className="relative w-full aspect-video bg-zinc-900 rounded-2xl overflow-hidden shadow-[0_0_60px_rgba(0,0,0,0.8)] border border-white/5">
@@ -165,21 +220,18 @@ export default async function TVDetailPage({ params, searchParams }) {
                     key={srv.id}
                     href={`?s=${currentSeason}&e=${currentEpisode}&server=${srv.id}`}
                     scroll={false}
-                    className={`group relative overflow-hidden px-2 xs:px-3 sm:px-5 py-2 sm:py-2.5 rounded-lg sm:rounded-xl transition-all duration-300 border shadow-lg ${
-                      isSelected
-                        ? "bg-green-600 border-green-500 shadow-green-500/30"
-                        : "bg-zinc-900 border-white/5 hover:border-green-500/40"
-                    }`}
+                    className={`group relative overflow-hidden px-2 xs:px-3 sm:px-5 py-2 sm:py-2.5 rounded-lg sm:rounded-xl transition-all duration-300 border shadow-lg ${isSelected
+                      ? "bg-green-600 border-green-500 shadow-green-500/30"
+                      : "bg-zinc-900 border-white/5 hover:border-green-500/40"
+                      }`}
                   >
                     <div className="relative z-10 flex flex-col items-start leading-tight">
-                      <span className={`text-[8px] xs:text-[9px] sm:text-[10px] font-black uppercase ${
-                        isSelected ? "text-white" : "text-white"
-                      }`}>
+                      <span className={`text-[8px] xs:text-[9px] sm:text-[10px] font-black uppercase ${isSelected ? "text-white" : "text-white"
+                        }`}>
                         {srv.label}
                       </span>
-                      <span className={`text-[7px] xs:text-[8px] sm:text-[9px] font-bold ${
-                        isSelected ? "text-green-100" : "text-zinc-500"
-                      }`}>
+                      <span className={`text-[7px] xs:text-[8px] sm:text-[9px] font-bold ${isSelected ? "text-green-100" : "text-zinc-500"
+                        }`}>
                         {srv.provider}
                       </span>
                     </div>
@@ -208,7 +260,7 @@ export default async function TVDetailPage({ params, searchParams }) {
                 {/* ✅ FIXED: Season Dropdown Mobile Clickable */}
                 <div className="relative group z-[100]">
                   {/* Trigger Button */}
-                  <button 
+                  <button
                     type="button"
                     className="px-3 py-1 rounded-md text-[10px] font-bold border border-red-600 bg-red-600 text-white flex items-center gap-2 shadow-[0_0_15px_rgba(220,38,38,0.3)] hover:bg-red-700 transition-colors"
                   >
@@ -223,11 +275,10 @@ export default async function TVDetailPage({ params, searchParams }) {
                         <a
                           key={s.id}
                           href={`?s=${s.season_number}&e=1`}
-                          className={`block px-4 py-2.5 text-[10px] font-bold uppercase border-b border-white/5 last:border-0 transition-colors active:bg-red-600/40 ${
-                            currentSeason === s.season_number
-                              ? 'bg-red-600/20 text-red-500'
-                              : 'text-zinc-400 hover:bg-white/5 hover:text-white'
-                          }`}
+                          className={`block px-4 py-2.5 text-[10px] font-bold uppercase border-b border-white/5 last:border-0 transition-colors active:bg-red-600/40 ${currentSeason === s.season_number
+                            ? 'bg-red-600/20 text-red-500'
+                            : 'text-zinc-400 hover:bg-white/5 hover:text-white'
+                            }`}
                         >
                           Season {s.season_number}
                         </a>
@@ -246,9 +297,8 @@ export default async function TVDetailPage({ params, searchParams }) {
                       key={`${ep.id}-${ep.episode_number}`}
                       href={`?s=${currentSeason}&e=${ep.episode_number}`}
                       scroll={false}
-                      className={`group relative block aspect-video w-full rounded-xl overflow-hidden bg-zinc-900 border ${
-                        isActive ? 'border-red-600' : 'border-white/5'
-                      }`}
+                      className={`group relative block aspect-video w-full rounded-xl overflow-hidden bg-zinc-900 border ${isActive ? 'border-red-600' : 'border-white/5'
+                        }`}
                     >
                       <Image
                         src={ep.still_path ? `https://image.tmdb.org/t/p/w500${ep.still_path}` : `https://image.tmdb.org/t/p/w500${tvShow.backdrop_path}`}
@@ -257,8 +307,10 @@ export default async function TVDetailPage({ params, searchParams }) {
                         className="object-cover"
                       />
 
-                      <div className="absolute inset-0 bg-linear-to-t from-black via-black/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10">
-                        <div className="absolute bottom-0 left-0 right-0 p-4 pb-6 flex flex-col items-start gap-1">
+                      <div className="absolute inset-0 z-10">
+                        <div className="absolute inset-0 backdrop-blur-md [mask-image:linear-gradient(to_top,black_0%,transparent_50%)] opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                        <div className="absolute bottom-0 left-0 right-0 p-4 pb-6 flex flex-col items-start gap-1 z-20 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                           <div className="flex items-center gap-2 mb-0.5">
                             <div className="bg-red-600 px-2 py-0.5 rounded-full flex items-center justify-center">
                               <span className="text-[9px] font-black leading-none text-black uppercase whitespace-nowrap pt-[0.5px]">
@@ -279,9 +331,13 @@ export default async function TVDetailPage({ params, searchParams }) {
                       </div>
 
                       {isActive && (
-                        <div className="absolute inset-0 bg-red-600/10 z-20 flex items-start p-3">
-                          <div className="absolute top-2 right-2 inline-flex items-center px-2 py-0.5 text-[8px] font-bold uppercase text-white bg-red-600 rounded">
-                            Now Watching
+                        <div className="absolute inset-x-0 bottom-0 z-20 flex justify-center">
+                          <div className="relative bg-red-600 px-4 py-1 flex items-center justify-center min-w-[100px] rounded-t-xl h-6">
+                            <div className="absolute -left-4 bottom-0 w-4 h-4 bg-red-600 [mask-image:radial-gradient(circle_at_0_0,transparent_16px,black_16px)]" />
+                            <div className="absolute -right-4 bottom-0 w-4 h-4 bg-red-600 [mask-image:radial-gradient(circle_at_100%_0,transparent_16px,black_16px)]" />
+                            <span className="text-[10px] font-bold uppercase text-white tracking-widest leading-none">
+                              Now Watching
+                            </span>
                           </div>
                         </div>
                       )}

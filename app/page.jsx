@@ -43,7 +43,8 @@ export default async function HomePage() {
         {genreId && (
           <Link
             href={`/${mediaType === 'tv' ? 'tv' : 'movie'}/genre/${genreId}`}
-            className="inline-flex items-center justify-center bg-brand-red text-white text-[12px] sm:text-[13px] font-black py-1.5 sm:py-2 px-5 sm:px-6 rounded-full uppercase tracking-widest transition-all duration-300 hover:scale-105 active:scale-95"          >
+            className="inline-flex items-center justify-center text-white/50 hover:text-white text-[11px] sm:text-[12px] font-black uppercase tracking-[0.2em] transition-all duration-300 hover:scale-105 active:scale-95"
+  >
             See All
           </Link>
         )}
