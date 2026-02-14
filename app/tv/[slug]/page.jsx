@@ -270,7 +270,7 @@ export default async function TVDetailPage({ params, searchParams }) {
                     S{currentSeason}
                     <span className="text-[8px] opacity-80">▼</span>
                   </button>
-                  
+
                   {/* Dropdown Menu */}
                   <div className="absolute top-full right-0 mt-1 w-32 bg-zinc-900 border border-white/10 rounded-md shadow-[0_10px_30px_rgba(0,0,0,0.8)] opacity-0 invisible group-hover:opacity-100 group-hover:visible group-focus-within:opacity-100 group-focus-within:visible transition-all duration-200 overflow-hidden">
                     <div className="max-h-60 overflow-y-auto no-scrollbar bg-zinc-950">
@@ -291,24 +291,33 @@ export default async function TVDetailPage({ params, searchParams }) {
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-4 md:gap-6 overflow-y-auto max-h-97 pr-2 scrollbar-hide">
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-6 overflow-y-auto max-h-150 pr-2 scrollbar-hide">
                 {episodes.map((ep) => {
                   const isActive = currentEpisode === ep.episode_number;
+
+                  // ✅ LOGIKA URL GAMBAR (Pertahankan struktur awal tapi lebih aman)
+                  // Kita cek satu-satu: path episode dulu, kalau nggak ada baru backdrop TV, kalau nggak ada pake placeholder.
+                  const imagePath = ep.still_path
+                    ? `https://image.tmdb.org/t/p/w500${ep.still_path}`
+                    : tvShow?.backdrop_path
+                      ? `https://image.tmdb.org/t/p/w500${tvShow.backdrop_path}`
+                      : "/no-poster.png"; // <-- Sediain file ini di folder public atau ganti URL placeholder
 
                   return (
                     <Link
                       key={`${ep.id}-${ep.episode_number}`}
                       href={`?s=${currentSeason}&e=${ep.episode_number}`}
                       scroll={false}
-                      tabIndex={0}
-                      className={`group relative block aspect-video w-full rounded-xl overflow-hidden bg-zinc-900 border transition-all duration-300 ${isActive ? 'border-red-600' : 'border-white/5'
+                      className={`group relative block aspect-video w-full rounded-xl overflow-hidden bg-zinc-900 border transition-all duration-300 ${isActive ? 'border-red-600 ring-2 ring-red-600/20' : 'border-white/5'
                         }`}
                     >
                       <Image
-                        src={ep.still_path ? `https://image.tmdb.org/t/p/w500${ep.still_path}` : `https://image.tmdb.org/t/p/w500${tvShow.backdrop_path}`}
+                        src={imagePath}
                         fill
-                        alt={ep.name}
-                        className="object-cover"
+                        alt={ep.name || `Episode ${ep.episode_number}`}
+                        className="object-cover transition-transform duration-500 group-hover:scale-110"
+                        sizes="(max-width: 768px) 50vw, 33vw"
+                        unoptimized={false}
                       />
 
                       <div className="absolute inset-0 z-10">
