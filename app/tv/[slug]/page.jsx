@@ -291,33 +291,24 @@ export default async function TVDetailPage({ params, searchParams }) {
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-6 overflow-y-auto max-h-150 pr-2 scrollbar-hide">
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-3 gap-4 md:gap-6">
                 {episodes.map((ep) => {
                   const isActive = currentEpisode === ep.episode_number;
-
-                  // ✅ LOGIKA URL GAMBAR (Pertahankan struktur awal tapi lebih aman)
-                  // Kita cek satu-satu: path episode dulu, kalau nggak ada baru backdrop TV, kalau nggak ada pake placeholder.
-                  const imagePath = ep.still_path
-                    ? `https://image.tmdb.org/t/p/w500${ep.still_path}`
-                    : tvShow?.backdrop_path
-                      ? `https://image.tmdb.org/t/p/w500${tvShow.backdrop_path}`
-                      : "/no-poster.png"; // <-- Sediain file ini di folder public atau ganti URL placeholder
 
                   return (
                     <Link
                       key={`${ep.id}-${ep.episode_number}`}
                       href={`?s=${currentSeason}&e=${ep.episode_number}`}
                       scroll={false}
-                      className={`group relative block aspect-video w-full rounded-xl overflow-hidden bg-zinc-900 border transition-all duration-300 ${isActive ? 'border-red-600 ring-2 ring-red-600/20' : 'border-white/5'
+                      className={`group relative block aspect-video w-full rounded-xl overflow-hidden bg-zinc-900 border ${isActive ? 'border-red-600' : 'border-white/5'
+
                         }`}
                     >
                       <Image
-                        src={imagePath}
+                        src={ep.still_path ? `https://image.tmdb.org/t/p/w500${ep.still_path}` : `https://image.tmdb.org/t/p/w500${tvShow.backdrop_path}`}
                         fill
-                        alt={ep.name || `Episode ${ep.episode_number}`}
-                        className="object-cover transition-transform duration-500 group-hover:scale-110"
-                        sizes="(max-width: 768px) 50vw, 33vw"
-                        unoptimized={false}
+                        alt={ep.name}
+                        className="object-cover"
                       />
 
                       <div className="absolute inset-0 z-10">
