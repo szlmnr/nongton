@@ -22,7 +22,7 @@ export default async function SearchPage({ searchParams }) {
       </h1>
 
       {filteredResults.length > 0 ? (
-        <div className="grid grid-cols-2 md:grid-cols-5 gap-6">
+        <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-x-2 gap-y-6 justify-items-center">
           {filteredResults.map((movie) => {
             // Tentukan tipe untuk link detail
             const type = movie.media_type || (movie.first_air_date ? 'tv' : 'movie');

@@ -1,4 +1,7 @@
 import Image from "next/image";
+import { getEventMovies } from '@/lib/tmdb';
+import { getActiveEvent } from '@/utils/eventHelper';
+import SpecialEventSection from '@/components/SpecialEventSection';
 import Link from "next/link";
 import MovieCard from "@/components/moviecard";
 import {
@@ -10,6 +13,7 @@ import {
   getFreshSeries,
   getMovieVideos,
 } from "@/lib/tmdb";
+
 
 export default async function HomePage() {
   // Ambil Data Movies
@@ -25,6 +29,10 @@ export default async function HomePage() {
   const freshSeries = await getFreshSeries();
   const sciFiTV = await getTVByGenre(10765);
   const featuredMovie = trendingMovies?.[Math.floor(Math.random() * trendingMovies.length)];
+
+  const activeEvent = getActiveEvent();
+  const eventMovies = activeEvent ? await getEventMovies(activeEvent) : [];
+
 
   // ✅ FIX: Tambah parameter mediaType untuk bedain movie/tv
   const MovieSection = ({ title, data, mediaType = 'movie', genreId }) => (
@@ -149,6 +157,13 @@ export default async function HomePage() {
           </>
         )}
       </section>
+
+      {activeEvent && eventMovies.length > 0 && (
+        <SpecialEventSection 
+          eventType={activeEvent} 
+          data={eventMovies} 
+        />
+      )}
 
       {/* ================= MOVIE SECTIONS ================= */}
       <div className="mt-8 sm:mt-10 md:mt-16 lg:mt-20">

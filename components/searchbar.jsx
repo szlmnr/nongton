@@ -60,6 +60,7 @@ export default function SearchBar() {
       <form onSubmit={handleSearch} className="relative z-10">
         <input
           type="text"
+          autoFocus
           placeholder="Cari film favoritmu..."
           value={query}
           onFocus={() => setIsFocused(true)}
@@ -79,11 +80,11 @@ export default function SearchBar() {
           <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
         </button>
       </form>
-      
+
       {/* SUGGESTIONS DROPDOWN */}
       {isFocused && suggestions.length > 0 && (
-        <div className="absolute top-[105%] left-0 right-0 bg-neutral-950/95 backdrop-blur-3xl border border-white/5 rounded-[1.5rem] overflow-hidden shadow-[0_25px_50px_-12px_rgba(0,0,0,0.9)] z-[9999] animate-in fade-in slide-in-from-top-1 duration-300">
-          <div className="p-2"> {/* Padding kontainer diperkecil */}
+        <div className="absolute bottom-[115%] md:top-[105%] md:bottom-auto left-0 right-0 mb-2 md:mb-0 bg-neutral-950/95 backdrop-blur-3xl border border-white/5 rounded-3xl overflow-hidden shadow-[0_25px_50px_-12px_rgba(0,0,0,0.9)] z-[9999] animate-in fade-in slide-in-from-bottom-2 md:slide-in-from-top-1 duration-300">
+          <div className="p-2 max-h-[50vh] overflow-y-auto">
             <p className="px-3 py-1 text-[9px] font-black uppercase tracking-[0.2em] text-gray-500 mb-1">Hasil Pencarian</p>
 
             {suggestions.map((movie) => (
